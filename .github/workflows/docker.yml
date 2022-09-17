@@ -64,5 +64,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             echo FULL_IMAGE_NAME=${{ steps.meta.outputs.tags }} > ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
+            echo BOT_TOKEN=${{ secrets.BOT_TOKEN }} >> ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
             env $(cat ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env | grep ^[A-Z] | xargs) \
                 docker stack deploy -c ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/compose.yml ${{ env.APP_NAME }}

@@ -1,5 +1,6 @@
 # Custom
 .idea
+.env
 
 ### VisualStudio template
 ## Ignore Visual Studio temporary files, build results, and
@@ -364,4 +365,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-

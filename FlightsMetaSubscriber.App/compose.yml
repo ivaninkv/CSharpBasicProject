@@ -2,3 +2,5 @@ version: "3"
 services:
   fms-bot:
     image: ${FULL_IMAGE_NAME}
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
