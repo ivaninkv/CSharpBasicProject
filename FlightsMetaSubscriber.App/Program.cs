@@ -1,4 +1,5 @@
 ﻿using FlightsMetaSubscriber.App.AviasalesAPI;
+using FlightsMetaSubscriber.App.Telegram;
 
 public class Program
 {
@@ -10,5 +11,8 @@ public class Program
         if (iataCodeByName != null)
             foreach (var item in iataCodeByName)
                 Console.WriteLine($"{item.Code} - {item.Name}");
+
+        var bot = new TgBot();
+        await bot.RunBot();
     }
 }
