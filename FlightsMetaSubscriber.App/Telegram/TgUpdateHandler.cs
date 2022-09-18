@@ -23,11 +23,13 @@ public class TgUpdateHandler
 
         var chatId = message.Chat.Id;
 
-        _logger.LogInformation($"Received a '{messageText}' message in chat {chatId}.");
+        _logger.LogInformation("Received a '{@messageText}' message in chat {@chatId}.",
+            messageText, chatId);
         var res = await _autocomplete.GetIataCodeByName(messageText);
         var textResults = string.Join(", ", res.Select(o => o.ToString()).ToArray());
         _logger.LogInformation(
-            $"По запросу {messageText} от пользователя {chatId}, найдено: {textResults}");
+            "По запросу {@messageText} от пользователя {@chatId}, найдено: {@textResults}",
+            messageText, chatId, textResults);
         var sentMessage = await botClient.SendTextMessageAsync(
             chatId,
             $"По запросу {messageText} найдено:\n{textResults}",

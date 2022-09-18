@@ -38,6 +38,6 @@ public class TgBot
         );
 
         var me = await _botClient.GetMeAsync(cts.Token);
-        _logger.LogInformation($"Start listening for @{me.Username}");
+        _logger.LogInformation("Start listening for @{@botName}", me.Username);
     }
 }
