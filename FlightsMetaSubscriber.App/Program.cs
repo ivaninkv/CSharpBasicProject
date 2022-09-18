@@ -13,6 +13,8 @@ try
         .ConfigureServices((hostContext, services) =>
         {
             services.AddSingleton<TgBot>();
+            services.AddSingleton<TgErrorHandler>();
+            services.AddSingleton<TgUpdateHandler>();
             services.AddScoped<Autocomplete>();
             services.AddHostedService<Worker>();
         })
