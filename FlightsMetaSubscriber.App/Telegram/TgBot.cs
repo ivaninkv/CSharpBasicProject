@@ -9,11 +9,13 @@ namespace FlightsMetaSubscriber.App.Telegram;
 public class TgBot
 {
     private readonly TelegramBotClient _botClient;
+    private readonly ILogger<TgBot> _logger;
 
-    public TgBot(TelegramBotClient? botClient = null)
+    public TgBot(ILogger<TgBot> logger, string? botToken = null)
     {
-        var botToken = Environment.GetEnvironmentVariable("BOT_TOKEN") ?? "";
-        _botClient = botClient ?? new TelegramBotClient(botToken);
+        _logger = logger;
+        var token = botToken ?? Environment.GetEnvironmentVariable("BOT_TOKEN") ?? "";
+        _botClient = new TelegramBotClient(token);
     }
 
     public async Task RunBot()
@@ -32,9 +34,7 @@ public class TgBot
         );
 
         var me = await _botClient.GetMeAsync(cts.Token);
-
-        Console.WriteLine($"Start listening for @{me.Username}");
-        Thread.Sleep(TimeSpan.FromMinutes(1));
+        _logger.LogInformation($"Start listening for @{me.Username}");
     }
 
     private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
@@ -45,7 +45,7 @@ public class TgBot
 
         var chatId = message.Chat.Id;
 
-        Console.WriteLine($"Received a '{messageText}' message in chat {chatId}.");
+        _logger.LogInformation($"Received a '{messageText}' message in chat {chatId}.");
 
         var sentMessage = await botClient.SendTextMessageAsync(
             chatId,
@@ -63,7 +63,7 @@ public class TgBot
             _ => exception.ToString()
         };
 
-        Console.WriteLine(errorMessage);
+        _logger.LogError(errorMessage);
         return Task.CompletedTask;
     }
 }
