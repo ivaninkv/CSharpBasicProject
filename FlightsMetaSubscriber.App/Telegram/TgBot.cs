@@ -49,8 +49,7 @@ public class TgBot
         var chatId = message.Chat.Id;
 
         _logger.LogInformation($"Received a '{messageText}' message in chat {chatId}.");
-        var res = await _autocomplete.GetIataCodeByName(messageText) ??
-                  Enumerable.Empty<AutocompleteResult>();
+        var res = await _autocomplete.GetIataCodeByName(messageText);
         var textResults = string.Join(", ", res.Select(o => o.ToString()).ToArray());
         _logger.LogInformation(
             $"По запросу {messageText} от пользователя {chatId}, найдено: {textResults}");
