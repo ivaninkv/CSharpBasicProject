@@ -11,4 +11,9 @@ public class AutocompleteResult
     [JsonPropertyName("name")] public string? Name { get; set; }
 
     [JsonPropertyName("country_name")] public string? CountryName { get; set; }
+
+    public override string ToString()
+    {
+        return $"{Code} - {Name}";
+    }
 }

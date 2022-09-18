@@ -1,3 +1,4 @@
+using FlightsMetaSubscriber.App.AviasalesAPI;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
@@ -8,12 +9,14 @@ namespace FlightsMetaSubscriber.App.Telegram;
 
 public class TgBot
 {
+    private readonly Autocomplete _autocomplete;
     private readonly TelegramBotClient _botClient;
     private readonly ILogger<TgBot> _logger;
 
-    public TgBot(ILogger<TgBot> logger, string? botToken = null)
+    public TgBot(ILogger<TgBot> logger, Autocomplete autocomplete, string? botToken = null)
     {
         _logger = logger;
+        _autocomplete = autocomplete;
         var token = botToken ?? Environment.GetEnvironmentVariable("BOT_TOKEN") ?? "";
         _botClient = new TelegramBotClient(token);
     }
@@ -46,10 +49,14 @@ public class TgBot
         var chatId = message.Chat.Id;
 
         _logger.LogInformation($"Received a '{messageText}' message in chat {chatId}.");
-
+        var res = await _autocomplete.GetIataCodeByName(messageText) ??
+                  Enumerable.Empty<AutocompleteResult>();
+        var textResults = string.Join(", ", res.Select(o => o.ToString()).ToArray());
+        _logger.LogInformation(
+            $"По запросу {messageText} от пользователя {chatId}, найдено: {textResults}");
         var sentMessage = await botClient.SendTextMessageAsync(
             chatId,
-            "Вы написали:\n" + messageText,
+            $"По запросу {messageText} найдено:\n{textResults}",
             cancellationToken: cancellationToken);
     }
 

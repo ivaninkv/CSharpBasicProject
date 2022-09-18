@@ -1,4 +1,5 @@
 ﻿using FlightsMetaSubscriber.App;
+using FlightsMetaSubscriber.App.AviasalesAPI;
 using FlightsMetaSubscriber.App.Telegram;
 using Serilog;
 
@@ -12,6 +13,7 @@ try
         .ConfigureServices((hostContext, services) =>
         {
             services.AddSingleton<TgBot>();
+            services.AddScoped<Autocomplete>();
             services.AddHostedService<Worker>();
         })
         .UseSerilog()
