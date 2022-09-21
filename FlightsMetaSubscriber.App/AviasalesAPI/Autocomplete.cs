@@ -20,8 +20,8 @@ public class Autocomplete
         try
         {
             _logger.LogInformation("Trying to get data from Aviasales API...");
-            var streamTask = Client.GetStreamAsync(AutocompleteUrl + searchRequest);
-            var results = await JsonSerializer.DeserializeAsync<List<AutocompleteResult>>(await streamTask);
+            var streamTask = await Client.GetStreamAsync(AutocompleteUrl + searchRequest);
+            var results = await JsonSerializer.DeserializeAsync<List<AutocompleteResult>>(streamTask);
             return results?.Take(3) ?? Enumerable.Empty<AutocompleteResult>();
         }
         catch (Exception e)
