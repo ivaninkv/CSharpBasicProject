@@ -1,6 +1,7 @@
 ﻿using FlightsMetaSubscriber.App;
 using FlightsMetaSubscriber.App.AviasalesAPI;
 using FlightsMetaSubscriber.App.Telegram;
+using FlightsMetaSubscriber.App.Telegram.Commands;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -15,6 +16,7 @@ try
             services.AddSingleton<TgBot>();
             services.AddSingleton<TgErrorHandler>();
             services.AddSingleton<TgUpdateHandler>();
+            services.AddSingleton<NewSubscription>();
             services.AddScoped<Autocomplete>();
             services.AddHostedService<Worker>();
         })
