@@ -1,6 +1,7 @@
 using System.Globalization;
 using FlightsMetaSubscriber.App.AviasalesAPI;
 using FlightsMetaSubscriber.App.Models;
+using FlightsMetaSubscriber.App.Repositories;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -14,8 +15,8 @@ public class NewSubscription : ICommand
     private readonly Autocomplete _autocomplete;
     private readonly Dictionary<long, int> userSteps = new();
     private readonly Dictionary<long, List<IataObject>> userIata = new();
-    private DateOnly _departureMinDate;
-    private DateOnly _departureMaxDate;
+    private DateTime _departureMinDate;
+    private DateTime _departureMaxDate;
     private readonly Subscription _subscription = new();
 
     public NewSubscription(ILogger<TgUpdateHandler> logger, Autocomplete autocomplete)
@@ -27,13 +28,14 @@ public class NewSubscription : ICommand
     public async Task Handle(ITelegramBotClient botClient, Message message)
     {
         var chatId = message.Chat.Id;
+        _subscription.UserId = chatId;
         var step = userSteps.ContainsKey(chatId) ? userSteps[chatId] : 1;
         if (!userIata.ContainsKey(chatId))
         {
             userIata[chatId] = new List<IataObject>();
         }
 
-        _logger.LogInformation("Received {@MessageText} message from {@UserId} user, step - {@Step}",
+        _logger.LogInformation("Received {@MessageText} message from {@UserId} users, step - {@Step}",
             message.Text, chatId, step);
 
         switch (step)
@@ -95,8 +97,8 @@ public class NewSubscription : ICommand
             case 5:
                 var split = message.Text.Split("-")
                     .Select(s => s.Trim()).ToArray();
-                if (!DateOnly.TryParseExact(split[0], "dd.MM.yyyy", out _departureMinDate) ||
-                    !DateOnly.TryParseExact(split[1], "dd.MM.yyyy", out _departureMaxDate))
+                if (!DateTime.TryParseExact(split[0], "dd.MM.yyyy", null, DateTimeStyles.None, out _departureMinDate) ||
+                    !DateTime.TryParseExact(split[1], "dd.MM.yyyy", null, DateTimeStyles.None, out _departureMaxDate))
                 {
                     await botClient.SendTextMessageAsync(chatId,
                         "Некорректно введены даты.\n\n" +
@@ -171,6 +173,7 @@ public class NewSubscription : ICommand
                 {
                     case "OK":
                         // TODO - сохранить подписку в БД
+                        SubscriptionRepository.Save(_subscription);
                         await botClient.SendTextMessageAsync(chatId,
                             "Подписка сохранена",
                             replyMarkup: new ReplyKeyboardRemove());

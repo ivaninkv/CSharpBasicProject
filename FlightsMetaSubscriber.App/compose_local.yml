@@ -1,21 +1,18 @@
 version: "3"
 services:
   fms-bot:
-    image: ${FULL_IMAGE_NAME}
+    build:
+      context: .
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
-      - DB_HOST=${DB_HOST}
-      - DB_NAME=${DB_NAME}
-      - DB_PASS=${DB_PASS}
-#   does not supported yet in docker swarm - https://github.com/docker/compose/issues/9957
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   postgres:
     image: postgres:15.1-bullseye
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready", "-d", "Shop" ]
+      test: [ "CMD-SHELL", "pg_isready", "-d", "fms" ]
       interval: 10s
       timeout: 5s
       retries: 5

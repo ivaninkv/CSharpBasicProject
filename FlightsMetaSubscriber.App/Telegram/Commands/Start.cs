@@ -1,3 +1,5 @@
+using FlightsMetaSubscriber.App.Models;
+using FlightsMetaSubscriber.App.Repositories;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -12,5 +14,6 @@ public class Start : ICommand
             "Сейчас бот знает следующие команды:\n" +
             "/newsubscription - создать новую подписку\n" +
             "/mysubscription - просмотреть свои подписки");
+        UserRepository.Save(new TgUser(message.Chat.Id));
     }
 }
