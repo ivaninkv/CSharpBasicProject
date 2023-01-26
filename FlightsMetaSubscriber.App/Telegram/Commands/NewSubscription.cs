@@ -1,3 +1,4 @@
+using System.Globalization;
 using FlightsMetaSubscriber.App.AviasalesAPI;
 using FlightsMetaSubscriber.App.Models;
 using Telegram.Bot;
@@ -85,7 +86,7 @@ public class NewSubscription : ICommand
 
                     await botClient.SendTextMessageAsync(chatId,
                         "Введите диапазон дат в формате: 'dd.MM.yyyy-dd.MM.yyyy'\n" +
-                        "Например - <code>01.05.2023-14.05.2023</code>", ParseMode.Html,
+                        "Например: <code>01.05.2023-14.05.2023</code>", ParseMode.Html,
                         replyMarkup: new ReplyKeyboardRemove());
                     userSteps[chatId] = step + 1;
                 }
@@ -94,13 +95,13 @@ public class NewSubscription : ICommand
             case 5:
                 var split = message.Text.Split("-")
                     .Select(s => s.Trim()).ToArray();
-                if (!DateOnly.TryParse(split[0], out _departureMinDate) ||
-                    !DateOnly.TryParse(split[1], out _departureMaxDate))
+                if (!DateOnly.TryParseExact(split[0], "dd.MM.yyyy", out _departureMinDate) ||
+                    !DateOnly.TryParseExact(split[1], "dd.MM.yyyy", out _departureMaxDate))
                 {
                     await botClient.SendTextMessageAsync(chatId,
                         "Некорректно введены даты.\n\n" +
                         "Введите диапазон дат в формате: 'dd.MM.yyyy-dd.MM.yyyy'\n" +
-                        "Например - <code>01.05.2023-14.05.2023</code>", ParseMode.Html);
+                        "Например: <code>01.05.2023-14.05.2023</code>", ParseMode.Html);
                     break;
                 }
 
