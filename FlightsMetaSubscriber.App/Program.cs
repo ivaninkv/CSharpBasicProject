@@ -16,7 +16,9 @@ try
             services.AddSingleton<TgBot>();
             services.AddSingleton<TgErrorHandler>();
             services.AddSingleton<TgUpdateHandler>();
+            services.AddSingleton<Start>();
             services.AddSingleton<NewSubscription>();
+            services.AddSingleton<MySubscriptions>();
             services.AddScoped<Autocomplete>();
             services.AddHostedService<Worker>();
         })

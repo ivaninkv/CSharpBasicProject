@@ -2,22 +2,21 @@ using FlightsMetaSubscriber.App.AviasalesAPI;
 using FlightsMetaSubscriber.App.Telegram.Commands;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace FlightsMetaSubscriber.App.Telegram;
 
 public class TgUpdateHandler
 {
-    private readonly Autocomplete _autocomplete;
-    private readonly ILogger<TgUpdateHandler> _logger;
+    private readonly Start _start;
     private readonly NewSubscription _newSubscription;
+    private readonly MySubscriptions _mySubscriptions;
     private readonly Dictionary<long, string> userCommands = new();
 
-    public TgUpdateHandler(ILogger<TgUpdateHandler> logger, Autocomplete autocomplete, NewSubscription newSubscription)
+    public TgUpdateHandler(NewSubscription newSubscription, Start start, MySubscriptions mySubscriptions)
     {
-        _logger = logger;
-        _autocomplete = autocomplete;
         _newSubscription = newSubscription;
+        _start = start;
+        _mySubscriptions = mySubscriptions;
     }
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
@@ -26,40 +25,29 @@ public class TgUpdateHandler
         if (update.Message is not { Text: { } command } message)
             return;
 
-        var userId = message.Chat.Id;
-        if (userCommands.ContainsKey(userId))
+        var chatId = message.Chat.Id;
+        if (userCommands.ContainsKey(chatId))
         {
-            command = userCommands[userId];
+            command = userCommands[chatId];
         }
         else
         {
-            userCommands[userId] = command;
+            userCommands[chatId] = command;
         }
-
-
-        // await botClient.SendTextMessageAsync(userId, "",
-        //     replyMarkup: new ReplyKeyboardRemove(), cancellationToken: cancellationToken);
 
         switch (command)
         {
+            case "/start":
+                await _start.Handle(botClient, message);
+                userCommands.Remove(chatId);
+                break;
             case "/newsubscription":
                 await _newSubscription.Handle(botClient, message);
                 break;
+            case "/mysubscription":
+                await _mySubscriptions.Handle(botClient, message);
+                userCommands.Remove(chatId);
+                break;
         }
-/*
-        var chatId = message.Chat.Id;
-
-        _logger.LogInformation("Received a '{@messageText}' message in chat {@chatId}.",
-            messageText, chatId);
-        var res = await _autocomplete.GetIataCodeByName(messageText);
-        var textResults = string.Join(", ", res.Select(o => o.ToString()).ToArray());
-        _logger.LogInformation(
-            "По запросу {@messageText} от пользователя {@chatId}, найдено: {@textResults}",
-            messageText, chatId, textResults);
-        var sentMessage = await botClient.SendTextMessageAsync(
-            chatId,
-            $"По запросу {messageText} найдено:\n{textResults}",
-            cancellationToken: cancellationToken);
-*/
     }
 }
