@@ -81,7 +81,7 @@ public class NewSubscription : ICommand
                 else if (message.Text.Equals("Перейти к вводу дат"))
                 {
                     _subscription.Origin = userIata[chatId];
-                    userIata[chatId].Clear();
+                    userIata[chatId] = new List<IataObject>();
 
                     await botClient.SendTextMessageAsync(chatId,
                         "Введите диапазон дат в формате: 'dd.MM.yyyy-dd.MM.yyyy'\n" +
@@ -150,14 +150,39 @@ public class NewSubscription : ICommand
                 else if (message.Text.Equals("Завершить ввод"))
                 {
                     _subscription.Destination = userIata[chatId];
-                    userIata[chatId].Clear();
+                    userIata[chatId] = new List<IataObject>();
+
+                    ReplyKeyboardMarkup step9Keyboard = new(new[]
+                        {
+                            new KeyboardButton[] { "OK", "Cancel" },
+                        })
+                        { ResizeKeyboard = true };
+                    await botClient.SendTextMessageAsync(chatId, "Подтвердите параметры подписки");
+                    await botClient.SendTextMessageAsync(chatId, _subscription.ToString(),
+                        replyMarkup: step9Keyboard);
+
                     userSteps[chatId] = step + 1;
                 }
 
                 break;
             case 9:
-                _logger.LogInformation(_subscription.ToString());
-                await botClient.SendTextMessageAsync(chatId, _subscription.ToString());
+                switch (message.Text)
+                {
+                    case "OK":
+                        // TODO - сохранить подписку в БД
+                        await botClient.SendTextMessageAsync(chatId,
+                            "Подписка сохранена",
+                            replyMarkup: new ReplyKeyboardRemove());
+                        userSteps.Remove(chatId);
+                        break;
+                    case "Cancel":
+                        await botClient.SendTextMessageAsync(chatId,
+                            "Ввод отменен",
+                            replyMarkup: new ReplyKeyboardRemove());
+                        userSteps.Remove(chatId);
+                        break;
+                }
+
                 break;
         }
     }

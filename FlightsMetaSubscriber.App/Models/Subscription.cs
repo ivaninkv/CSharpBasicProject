@@ -10,9 +10,9 @@ public class Subscription
 
     public override string ToString()
     {
-        return $"Origin - {string.Join(", ", Origin)}; " +
-               $"Destination - {string.Join(", ", Destination)}; " +
-               $"DepartureMinDate - {DepartureMinDate}; " +
-               $"DepartureMaxDate - {DepartureMaxDate}.";
+        return $"Отправление - {string.Join(", ", Origin)}; " +
+               $"Прибытие - {string.Join(", ", Destination)}; " +
+               $"Вылет с - {DepartureMinDate}; " +
+               $"Вылет по - {DepartureMaxDate}.";
     }
 }
