@@ -31,6 +31,7 @@ create table origin
             references subscription,
     user_id      bigint  not null,
     iata_code    varchar not null,
+    iata_name    varchar,
     constraint origin_pk
         primary key (subscribe_id, user_id, iata_code)
 );
@@ -45,6 +46,7 @@ create table destination
             references subscription,
     user_id      bigint  not null,
     iata_code    varchar not null,
+    iata_name    varchar,
     constraint destination_pk
         primary key (subscribe_id, user_id, iata_code)
 );

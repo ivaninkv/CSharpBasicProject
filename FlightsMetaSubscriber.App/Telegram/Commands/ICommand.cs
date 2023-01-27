@@ -5,5 +5,5 @@ namespace FlightsMetaSubscriber.App.Telegram.Commands;
 
 public interface ICommand
 {
-    public Task Handle(ITelegramBotClient botClient, Message message);
+    public Task<bool> Handle(ITelegramBotClient botClient, Message message);
 }

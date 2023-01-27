@@ -25,7 +25,7 @@ public class NewSubscription : ICommand
         _autocomplete = autocomplete;
     }
 
-    public async Task Handle(ITelegramBotClient botClient, Message message)
+    public async Task<bool> Handle(ITelegramBotClient botClient, Message message)
     {
         var chatId = message.Chat.Id;
         _subscription.UserId = chatId;
@@ -35,8 +35,7 @@ public class NewSubscription : ICommand
             userIata[chatId] = new List<IataObject>();
         }
 
-        _logger.LogInformation("Received {@MessageText} message from {@UserId} users, step - {@Step}",
-            message.Text, chatId, step);
+
 
         switch (step)
         {
@@ -172,22 +171,25 @@ public class NewSubscription : ICommand
                 switch (message.Text)
                 {
                     case "OK":
-                        // TODO - сохранить подписку в БД
                         SubscriptionRepository.Save(_subscription);
                         await botClient.SendTextMessageAsync(chatId,
                             "Подписка сохранена",
                             replyMarkup: new ReplyKeyboardRemove());
                         userSteps.Remove(chatId);
+                        return true;
                         break;
                     case "Cancel":
                         await botClient.SendTextMessageAsync(chatId,
                             "Ввод отменен",
                             replyMarkup: new ReplyKeyboardRemove());
                         userSteps.Remove(chatId);
+                        return true;
                         break;
                 }
 
                 break;
         }
+
+        return false;
     }
 }

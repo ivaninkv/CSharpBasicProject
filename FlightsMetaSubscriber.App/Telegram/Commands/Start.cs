@@ -7,7 +7,7 @@ namespace FlightsMetaSubscriber.App.Telegram.Commands;
 
 public class Start : ICommand
 {
-    public async Task Handle(ITelegramBotClient botClient, Message message)
+    public async Task<bool> Handle(ITelegramBotClient botClient, Message message)
     {
         await botClient.SendTextMessageAsync(message.Chat.Id,
             "Привет!\n\n" +
@@ -15,5 +15,7 @@ public class Start : ICommand
             "/newsubscription - создать новую подписку\n" +
             "/mysubscription - просмотреть свои подписки");
         UserRepository.Save(new TgUser(message.Chat.Id));
+
+        return true;
     }
 }

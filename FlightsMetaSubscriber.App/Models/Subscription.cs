@@ -13,7 +13,7 @@ public class Subscription
     {
         return $"Отправление - {string.Join(", ", Origin)}; " +
                $"Прибытие - {string.Join(", ", Destination)}; " +
-               $"Вылет с - {DepartureMinDate}; " +
-               $"Вылет по - {DepartureMaxDate}.";
+               $"Вылет с - {DepartureMinDate.ToShortDateString()}; " +
+               $"Вылет по - {DepartureMaxDate.ToShortDateString()}.";
     }
 }

@@ -7,15 +7,17 @@ namespace FlightsMetaSubscriber.App.Telegram;
 
 public class TgUpdateHandler
 {
+    private readonly ILogger<TgUpdateHandler> _logger;
     private readonly Start _start;
     private readonly NewSubscription _newSubscription;
     private readonly MySubscriptions _mySubscriptions;
     private readonly Dictionary<long, string> userCommands = new();
 
-    public TgUpdateHandler(NewSubscription newSubscription, Start start, MySubscriptions mySubscriptions)
+    public TgUpdateHandler(NewSubscription newSubscription, Start start, MySubscriptions mySubscriptions, ILogger<TgUpdateHandler> logger)
     {
-        _newSubscription = newSubscription;
+        _logger = logger;
         _start = start;
+        _newSubscription = newSubscription;
         _mySubscriptions = mySubscriptions;
     }
 
@@ -35,6 +37,9 @@ public class TgUpdateHandler
             userCommands[chatId] = command;
         }
 
+        _logger.LogInformation("Received {@MessageText} message from {@ChatId} chat",
+            message.Text, chatId);
+
         switch (command)
         {
             case "/start":
@@ -42,9 +47,14 @@ public class TgUpdateHandler
                 userCommands.Remove(chatId);
                 break;
             case "/newsubscription":
-                await _newSubscription.Handle(botClient, message);
+                var completed = await _newSubscription.Handle(botClient, message);
+                if (completed)
+                {
+                    userCommands.Remove(chatId);
+                }
+
                 break;
-            case "/mysubscription":
+            case "/mysubscriptions":
                 await _mySubscriptions.Handle(botClient, message);
                 userCommands.Remove(chatId);
                 break;
