@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace FlightsMetaSubscriber.App.Models;
 
 public class Subscription
@@ -13,7 +15,7 @@ public class Subscription
     {
         return $"Отправление - {string.Join(", ", Origin)}; " +
                $"Прибытие - {string.Join(", ", Destination)}; " +
-               $"Вылет с - {DepartureMinDate.ToShortDateString()}; " +
-               $"Вылет по - {DepartureMaxDate.ToShortDateString()}.";
+               $"Вылет с - {DepartureMinDate:dd.MM.yyyy}; " +
+               $"Вылет по - {DepartureMaxDate:dd.MM.yyyy}.";
     }
 }
