@@ -8,4 +8,31 @@ public static class Config
 
     public static readonly string ConnectionString =
         $"User ID=postgres;Password={dbPass};Host={dbHost};Port=5432;Database={dbName};";
+
+    public static readonly string AviaSalesApiToken = Environment.GetEnvironmentVariable("AVIASALES_TOKEN");
+
+    public const string QueryTemplate = @"
+{0}: prices_one_way(
+    params: {{
+        origin: \""{1}\"",
+        destination: \""{2}\"",
+        depart_date_min: \""{3}\"",
+        depart_date_max: \""{4}\"",
+        no_lowcost: false,
+        direct: true
+    }},
+    grouping: NONE,
+    paging: {{
+        limit: 3,
+        offset: 0
+    }},
+    sorting: VALUE_ASC
+)   {{
+        origin_city_iata
+        destination_city_iata
+        departure_at
+		value
+		ticket_link
+    }},
+";
 }

@@ -20,6 +20,7 @@ try
             services.AddSingleton<NewSubscription>();
             services.AddSingleton<MySubscriptions>();
             services.AddScoped<Autocomplete>();
+            services.AddScoped<PricesOneWay>();
             services.AddHostedService<Worker>();
         })
         .UseSerilog()
