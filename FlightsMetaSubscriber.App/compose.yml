@@ -7,6 +7,7 @@ services:
       - DB_HOST=${DB_HOST}
       - DB_NAME=${DB_NAME}
       - DB_PASS=${DB_PASS}
+      - AVIASALES_TOKEN=${AVIASALES_TOKEN}
 #   does not supported yet in docker swarm - https://github.com/docker/compose/issues/9957
 #    depends_on:
 #      postgres:

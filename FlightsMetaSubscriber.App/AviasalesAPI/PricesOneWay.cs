@@ -1,5 +1,8 @@
 using System.Text;
+using System.Text.Json.Nodes;
 using FlightsMetaSubscriber.App.Models;
+
+using Json.Path;
 using RestSharp;
 
 namespace FlightsMetaSubscriber.App.AviasalesAPI;
@@ -7,8 +10,14 @@ namespace FlightsMetaSubscriber.App.AviasalesAPI;
 public class PricesOneWay
 {
     private const string GraphQlUrl = "http://api.travelpayouts.com/graphql/v1/query";
+    private readonly ILogger<PricesOneWay> _logger;
 
-    public async Task GetMinPrices(Subscription subscription)
+    public PricesOneWay(ILogger<PricesOneWay> logger)
+    {
+        _logger = logger;
+    }
+
+    public async Task<List<SearchResult>> FindPricesForSubscription(Subscription subscription)
     {
         var client = new RestClient(GraphQlUrl);
         var request = new RestRequest("", Method.Post)
@@ -16,8 +25,24 @@ public class PricesOneWay
             .AddHeader("X-Access-token", Config.AviaSalesApiToken)
             .AddParameter("application/json", BuildQuery(subscription), ParameterType.RequestBody);
         var result = await client.PostAsync(request);
+
+        var data = JsonNode.Parse(result.Content);
+        var nodeList = JsonPath.Parse("$.*.*.*").Evaluate(data).Matches;
+        // var searchResults = nodeList.ToJsonDocument().Deserialize<List<SearchResult>>();
+        var searchResults = DeserializeNodeList(nodeList);
+
+        return searchResults;
     }
 
+    private List<SearchResult> DeserializeNodeList(NodeList nodeList)
+    {
+        return nodeList.Select(node => new SearchResult(
+            node.Value["origin_city_iata"].ToString(),
+            node.Value["destination_city_iata"].ToString(),
+            DateTimeOffset.ParseExact(node.Value["departure_at"].ToString(), "yyyy-MM-ddTHH:mm:sszzz", null),
+            double.Parse(node.Value["value"].ToString()),
+            node.Value["ticket_link"].ToString())).ToList();
+    }
 
     private string BuildQuery(Subscription subscription)
     {
@@ -41,6 +66,10 @@ public class PricesOneWay
             .Replace("\n", string.Empty)
             .Replace("\t", " ");
 
-        return $"{{ \"operationName\": null, \"variables\": {{}}, \"query\": \"{sb}\" }}";
+        var result = $"{{ \"operationName\": null, \"variables\": {{}}, \"query\": \"{sb}\" }}";
+
+        _logger.LogDebug("Price_one_way graphQL request {@PriceOneWayRequest}", result);
+
+        return result;
     }
 }
