@@ -19,6 +19,7 @@ try
             services.AddSingleton<TgErrorHandler>();
             services.AddSingleton<TgUpdateHandler>();
             services.AddSingleton<Start>();
+            services.AddSingleton<Help>();
             services.AddSingleton<NewSubscription>();
             services.AddSingleton<MySubscriptions>();
             services.AddScoped<Autocomplete>();
