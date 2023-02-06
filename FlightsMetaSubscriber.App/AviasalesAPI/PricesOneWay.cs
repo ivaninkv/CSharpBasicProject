@@ -1,7 +1,6 @@
 using System.Text;
 using System.Text.Json.Nodes;
 using FlightsMetaSubscriber.App.Models;
-
 using Json.Path;
 using RestSharp;
 
@@ -29,14 +28,15 @@ public class PricesOneWay
         var data = JsonNode.Parse(result.Content);
         var nodeList = JsonPath.Parse("$.*.*.*").Evaluate(data).Matches;
         // var searchResults = nodeList.ToJsonDocument().Deserialize<List<SearchResult>>();
-        var searchResults = DeserializeNodeList(nodeList);
+        var searchResults = DeserializeNodeList(nodeList, subscription.Id);
 
         return searchResults;
     }
 
-    private List<SearchResult> DeserializeNodeList(NodeList nodeList)
+    private List<SearchResult> DeserializeNodeList(NodeList nodeList, int subscriptionId)
     {
         return nodeList.Select(node => new SearchResult(
+            subscriptionId,
             node.Value["origin_city_iata"].ToString(),
             node.Value["destination_city_iata"].ToString(),
             DateTimeOffset.ParseExact(node.Value["departure_at"].ToString(), "yyyy-MM-ddTHH:mm:sszzz", null),

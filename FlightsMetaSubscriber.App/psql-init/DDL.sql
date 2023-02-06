@@ -53,3 +53,23 @@ create table destination
 
 alter table destination
     owner to postgres;
+
+create table search_result
+(
+    id              serial
+        constraint search_result_pk
+            primary key,
+    subscription_id integer   not null
+        constraint search_result_subscription_id_fk
+            references subscription,
+    search_dt       timestamp not null,
+    origin          varchar   not null,
+    destination     varchar   not null,
+    departure_at    timestamp,
+    price           numeric,
+    ticket_link     varchar,
+    dt_offset       varchar
+);
+
+alter table search_result
+    owner to postgres;

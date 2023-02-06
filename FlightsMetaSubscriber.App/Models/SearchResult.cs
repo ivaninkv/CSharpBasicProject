@@ -1,38 +1,34 @@
-using System.Text.Json.Serialization;
-
 namespace FlightsMetaSubscriber.App.Models;
 
 public class SearchResult
 {
-    public SearchResult(string originCityIata, string destinationCityIata, DateTimeOffset departureAt, double value, string ticketLink)
+    public SearchResult(int subscriptionId, string originCityIata, string destinationCityIata,
+        DateTimeOffset departureAt, double value, string ticketLink)
     {
+        SubscriptionId = subscriptionId;
         OriginCityIata = originCityIata;
         DestinationCityIata = destinationCityIata;
         DepartureAt = departureAt;
         Value = value;
         TicketLink = ticketLink;
+        SearchDate = DateTime.UtcNow;
+        Offset = departureAt.Offset.ToString();
     }
 
-        [JsonPropertyName("origin_city_iata")]
-        public string OriginCityIata { get; set; }
+    public int SubscriptionId { get; set; }
+    public string OriginCityIata { get; set; }
+    public string DestinationCityIata { get; set; }
+    public DateTimeOffset DepartureAt { get; set; }
+    public double Value { get; set; }
+    public string TicketLink { get; set; }
+    public DateTime SearchDate { get; set; }
+    public string Offset { get; set; }
 
-        [JsonPropertyName("destination_city_iata")]
-        public string DestinationCityIata { get; set; }
-
-        [JsonPropertyName("departure_at")]
-        public DateTimeOffset DepartureAt { get; set; }
-
-        [JsonPropertyName("value")]
-        public double Value { get; set; }
-
-        [JsonPropertyName("ticket_link")]
-        public string TicketLink { get; set; }
-
-        public override string ToString()
-        {
-                return $"Origin - {OriginCityIata}, " +
-                       $"Destination - {DestinationCityIata}, " +
-                       $"Departure at - {DepartureAt}, " +
-                       $"Price - {Value}";
-        }
+    public override string ToString()
+    {
+        return $"Origin - {OriginCityIata}, " +
+               $"Destination - {DestinationCityIata}, " +
+               $"Departure at - {DepartureAt}, " +
+               $"Price - {Value}";
+    }
 }

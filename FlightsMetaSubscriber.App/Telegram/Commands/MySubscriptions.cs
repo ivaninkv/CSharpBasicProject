@@ -1,4 +1,3 @@
-using FlightsMetaSubscriber.App.AviasalesAPI;
 using FlightsMetaSubscriber.App.Repositories;
 using Telegram.Bot;
 using Telegram.Bot.Types;

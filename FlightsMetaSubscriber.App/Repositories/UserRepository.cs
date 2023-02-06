@@ -17,4 +17,16 @@ public class UserRepository
             active = user.Active
         });
     }
+
+    public static List<TgUser> GetActiveUsers()
+    {
+        using var conn = new NpgsqlConnection(Config.ConnectionString);
+        const string query =
+            $"select id Id, active Active " +
+            $"from users " +
+            $"where active = true";
+        var result = conn.Query<TgUser>(query).ToList();
+
+        return result;
+    }
 }

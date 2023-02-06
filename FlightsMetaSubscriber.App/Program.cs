@@ -1,5 +1,7 @@
-﻿using FlightsMetaSubscriber.App;
+﻿using Coravel;
+using FlightsMetaSubscriber.App;
 using FlightsMetaSubscriber.App.AviasalesAPI;
+using FlightsMetaSubscriber.App.Scheduler;
 using FlightsMetaSubscriber.App.Telegram;
 using FlightsMetaSubscriber.App.Telegram.Commands;
 using Serilog;
@@ -22,9 +24,21 @@ try
             services.AddScoped<Autocomplete>();
             services.AddScoped<PricesOneWay>();
             services.AddHostedService<Worker>();
+            services.AddTransient<PricesUpdater>();
+            services.AddScheduler();
         })
         .UseSerilog()
         .Build();
+
+    host.Services.UseScheduler(scheduler =>
+    {
+        scheduler.ScheduleAsync(async () =>
+            {
+                using var scope = host.Services.CreateScope();
+                var updater = scope.ServiceProvider.GetRequiredService<PricesUpdater>();
+                await updater.Invoke();
+            }).EveryTenSeconds();
+    });
 
     await host.RunAsync();
 }
