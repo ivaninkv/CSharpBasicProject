@@ -15,6 +15,10 @@ public class SearchResult
         Offset = departureAt.Offset.ToString();
     }
 
+    public SearchResult()
+    {
+    }
+
     public int SubscriptionId { get; set; }
     public string OriginCityIata { get; set; }
     public string DestinationCityIata { get; set; }

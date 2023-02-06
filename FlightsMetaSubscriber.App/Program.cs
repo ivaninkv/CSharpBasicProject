@@ -33,11 +33,11 @@ try
     host.Services.UseScheduler(scheduler =>
     {
         scheduler.ScheduleAsync(async () =>
-            {
-                using var scope = host.Services.CreateScope();
-                var updater = scope.ServiceProvider.GetRequiredService<PricesUpdater>();
-                await updater.Invoke();
-            }).EveryTenSeconds();
+        {
+            using var scope = host.Services.CreateScope();
+            var updater = scope.ServiceProvider.GetRequiredService<PricesUpdater>();
+            await updater.Invoke();
+        }).DailyAtHour(4);
     });
 
     await host.RunAsync();

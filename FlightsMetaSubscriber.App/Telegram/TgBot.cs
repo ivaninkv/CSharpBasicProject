@@ -7,7 +7,7 @@ namespace FlightsMetaSubscriber.App.Telegram;
 
 public class TgBot
 {
-    private readonly TelegramBotClient _botClient;
+    public readonly TelegramBotClient BotClient;
     private readonly TgErrorHandler _errorHandling;
     private readonly ILogger<TgBot> _logger;
     private readonly TgUpdateHandler _updateHandler;
@@ -19,7 +19,7 @@ public class TgBot
         _errorHandling = errorHandling;
         _updateHandler = updateHandler;
         var token = botToken ?? Environment.GetEnvironmentVariable("BOT_TOKEN") ?? "";
-        _botClient = new TelegramBotClient(token);
+        BotClient = new TelegramBotClient(token);
     }
 
     public async Task RunBot()
@@ -30,14 +30,14 @@ public class TgBot
         {
             AllowedUpdates = new[] { UpdateType.Message }
         };
-        _botClient.StartReceiving(
+        BotClient.StartReceiving(
             _updateHandler.HandleUpdateAsync,
             _errorHandling.HandlePollingErrorAsync,
             receiverOptions,
             cts.Token
         );
 
-        var me = await _botClient.GetMeAsync(cts.Token);
+        var me = await BotClient.GetMeAsync(cts.Token);
         _logger.LogInformation("Start listening for @{@botName}", me.Username);
     }
 }
