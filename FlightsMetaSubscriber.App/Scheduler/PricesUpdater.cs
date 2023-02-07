@@ -32,7 +32,8 @@ public class PricesUpdater : IInvocable
         {
             var userSubscriptions = SubscriptionRepository.GetByUserId(tgUser.Id);
 
-            _logger.LogInformation("{@qty} subscriptions found", userSubscriptions.Count);
+            _logger.LogInformation("{@qty} subscriptions found of {@user} user",
+                userSubscriptions.Count, tgUser.Id);
 
             foreach (var subscription in userSubscriptions)
             {

@@ -38,7 +38,7 @@ try
             using var scope = host.Services.CreateScope();
             var updater = scope.ServiceProvider.GetRequiredService<PricesUpdater>();
             await updater.Invoke();
-        }).DailyAtHour(4);
+        }).DailyAt(4, 20);
     });
 
     await host.RunAsync();

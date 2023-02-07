@@ -25,10 +25,18 @@ public class PricesOneWay
             .AddParameter("application/json", BuildQuery(subscription), ParameterType.RequestBody);
         var result = await client.PostAsync(request);
 
-        var data = JsonNode.Parse(result.Content);
-        var nodeList = JsonPath.Parse("$.*.*.*").Evaluate(data).Matches;
-        // var searchResults = nodeList.ToJsonDocument().Deserialize<List<SearchResult>>();
-        var searchResults = DeserializeNodeList(nodeList, subscription.Id);
+        var searchResults = new List<SearchResult>();
+        try
+        {
+            var data = JsonNode.Parse(result.Content);
+            var nodeList = JsonPath.Parse("$.*.*.*").Evaluate(data).Matches;
+            // var searchResults = nodeList.ToJsonDocument().Deserialize<List<SearchResult>>();
+            searchResults = DeserializeNodeList(nodeList, subscription.Id);
+        }
+        catch (Exception e)
+        {
+            _logger.LogInformation($"Error parsing JSON from AviaSales, message: {e.Message}");
+        }
 
         return searchResults;
     }
