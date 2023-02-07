@@ -20,6 +20,7 @@ try
             services.AddSingleton<TgUpdateHandler>();
             services.AddSingleton<Start>();
             services.AddSingleton<Help>();
+            services.AddSingleton<GetPrices>();
             services.AddSingleton<NewSubscription>();
             services.AddSingleton<MySubscriptions>();
             services.AddScoped<Autocomplete>();
@@ -38,7 +39,7 @@ try
             using var scope = host.Services.CreateScope();
             var updater = scope.ServiceProvider.GetRequiredService<PricesUpdater>();
             await updater.Invoke();
-        }).DailyAt(4, 20);
+        }).DailyAt(4, 0);
     });
 
     await host.RunAsync();
