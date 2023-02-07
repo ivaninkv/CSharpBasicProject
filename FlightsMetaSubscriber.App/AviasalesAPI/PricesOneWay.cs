@@ -35,7 +35,7 @@ public class PricesOneWay
         }
         catch (Exception e)
         {
-            _logger.LogInformation($"Error parsing JSON from AviaSales, message: {e.Message}");
+            _logger.LogInformation("Error parsing JSON from AviaSales, message: {@ErrorMessage}", e.Message);
         }
 
         return searchResults;
