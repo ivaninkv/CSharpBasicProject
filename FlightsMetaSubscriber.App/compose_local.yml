@@ -1,10 +1,13 @@
 version: "3"
 services:
   fms-bot:
-    build:
-      context: .
+    image: ghcr.io/ivaninkv/csharpbasicproject:master
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_PASS=${DB_PASS}
+      - AVIASALES_TOKEN=${AVIASALES_TOKEN}
     depends_on:
       postgres:
         condition: service_healthy
