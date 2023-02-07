@@ -10,7 +10,8 @@ public class Help : ICommand
         await botClient.SendTextMessageAsync(message.Chat.Id,
             "Сейчас бот знает следующие команды:\n" +
             "/newsubscription - создать новую подписку\n" +
-            "/mysubscriptions - просмотреть свои подписки");
+            "/mysubscriptions - просмотреть свои подписки\n" +
+            "/getprices - запустить поиск цен");
 
         return true;
     }

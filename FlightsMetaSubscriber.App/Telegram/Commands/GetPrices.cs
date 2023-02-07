@@ -15,7 +15,7 @@ public class GetPrices : ICommand
 
     public async Task<bool> Handle(ITelegramBotClient botClient, Message message)
     {
-        _pricesUpdater.Invoke();
+        await _pricesUpdater.Invoke();
 
         return true;
     }

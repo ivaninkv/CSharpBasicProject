@@ -11,13 +11,13 @@ public class PricesUpdater : IInvocable
 {
     private readonly PricesOneWay _pricesOneWay;
     private readonly ILogger<PricesUpdater> _logger;
-    private readonly TgBot _tgBot;
+    private readonly TgBotClient _tgBotClient;
 
-    public PricesUpdater(PricesOneWay pricesOneWay, ILogger<PricesUpdater> logger, TgBot tgBot)
+    public PricesUpdater(PricesOneWay pricesOneWay, ILogger<PricesUpdater> logger, TgBotClient tgBotClient)
     {
         _pricesOneWay = pricesOneWay;
         _logger = logger;
-        _tgBot = tgBot;
+        _tgBotClient = tgBotClient;
     }
 
     public async Task Invoke()
@@ -55,9 +55,9 @@ public class PricesUpdater : IInvocable
         var minResult = searchResults.OrderBy(result => result.Value).FirstOrDefault(new SearchResult());
         if (minResult.Value > 0)
         {
-            await _tgBot.BotClient.SendTextMessageAsync(subscription.UserId, "Результаты поиска по подписке:");
-            await _tgBot.BotClient.SendTextMessageAsync(subscription.UserId, subscription.ToString());
-            await _tgBot.BotClient.SendTextMessageAsync(subscription.UserId, minResult.ToString());
+            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, "Результаты поиска по подписке:");
+            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, subscription.ToString());
+            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, minResult.ToString());
         }
 
     }

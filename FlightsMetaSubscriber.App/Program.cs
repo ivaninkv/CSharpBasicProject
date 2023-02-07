@@ -15,6 +15,7 @@ try
     using var host = Host.CreateDefaultBuilder(args)
         .ConfigureServices((hostContext, services) =>
         {
+            services.AddSingleton<TgBotClient>();
             services.AddSingleton<TgBot>();
             services.AddSingleton<TgErrorHandler>();
             services.AddSingleton<TgUpdateHandler>();
