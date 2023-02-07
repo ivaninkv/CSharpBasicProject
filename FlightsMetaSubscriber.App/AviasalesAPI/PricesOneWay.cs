@@ -72,12 +72,8 @@ public class PricesOneWay
         }
 
         sb.Append('}');
-        // sb.Replace("\r", string.Empty)
-        //     .Replace("\n", string.Empty)
-        //     .Replace("\t", " ");
 
         var str = Regex.Replace(sb.ToString(), @"\s+", " ");
-
         var result = $"{{ \"operationName\": null, \"variables\": {{}}, \"query\": \"{str}\" }}";
 
         _logger.LogDebug("Price_one_way graphQL request {@PriceOneWayRequest}", result);

@@ -32,7 +32,7 @@ public class SearchResult
     {
         return $"Origin - {OriginCityIata}, " +
                $"Destination - {DestinationCityIata}, " +
-               $"Departure at - {DepartureAt}, " +
+               $"Departure at - {DepartureAt:dd.MM.yyyy}, " +
                $"Price - {Value}";
     }
 }

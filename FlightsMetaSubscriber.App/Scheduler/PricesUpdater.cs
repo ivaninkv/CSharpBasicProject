@@ -59,6 +59,11 @@ public class PricesUpdater : IInvocable
             await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, subscription.ToString());
             await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, minResult.ToString());
         }
+        else
+        {
+            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, "Билетов по вашей подписке не найдено");
+            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, subscription.ToString());
+        }
 
     }
 }
