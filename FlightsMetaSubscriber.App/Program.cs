@@ -8,7 +8,6 @@ using Serilog;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .MinimumLevel.Debug()
     .CreateBootstrapLogger();
 
 try

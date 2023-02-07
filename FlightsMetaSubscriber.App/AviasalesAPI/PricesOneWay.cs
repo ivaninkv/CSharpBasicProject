@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using FlightsMetaSubscriber.App.Models;
 using Json.Path;
 using RestSharp;
@@ -71,11 +72,13 @@ public class PricesOneWay
         }
 
         sb.Append('}');
-        sb.Replace("\r", string.Empty)
-            .Replace("\n", string.Empty)
-            .Replace("\t", " ");
+        // sb.Replace("\r", string.Empty)
+        //     .Replace("\n", string.Empty)
+        //     .Replace("\t", " ");
 
-        var result = $"{{ \"operationName\": null, \"variables\": {{}}, \"query\": \"{sb}\" }}";
+        var str = Regex.Replace(sb.ToString(), @"\s+", " ");
+
+        var result = $"{{ \"operationName\": null, \"variables\": {{}}, \"query\": \"{str}\" }}";
 
         _logger.LogDebug("Price_one_way graphQL request {@PriceOneWayRequest}", result);
 
