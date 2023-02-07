@@ -23,11 +23,12 @@ public class PricesOneWay
             .AddHeader("Content-Type", "application/json")
             .AddHeader("X-Access-token", Config.AviaSalesApiToken)
             .AddParameter("application/json", BuildQuery(subscription), ParameterType.RequestBody);
-        var result = await client.PostAsync(request);
+
 
         var searchResults = new List<SearchResult>();
         try
         {
+            var result = await client.PostAsync(request);
             var data = JsonNode.Parse(result.Content);
             var nodeList = JsonPath.Parse("$.*.*.*").Evaluate(data).Matches;
             // var searchResults = nodeList.ToJsonDocument().Deserialize<List<SearchResult>>();
@@ -35,7 +36,7 @@ public class PricesOneWay
         }
         catch (Exception e)
         {
-            _logger.LogInformation("Error parsing JSON from AviaSales, message: {@ErrorMessage}", e.Message);
+            _logger.LogInformation("Error from AviaSales, message: {@ErrorMessage}", e.Message);
         }
 
         return searchResults;
