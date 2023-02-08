@@ -2,6 +2,8 @@ namespace FlightsMetaSubscriber.App.Models;
 
 public class SearchResult
 {
+    private const string SearchUrl = "https://www.aviasales.ru/search";
+
     public SearchResult(int subscriptionId, string originCityIata, string destinationCityIata,
         DateTimeOffset departureAt, double value, string ticketLink)
     {
@@ -30,9 +32,16 @@ public class SearchResult
 
     public override string ToString()
     {
-        return $"Origin - {OriginCityIata}, " +
-               $"Destination - {DestinationCityIata}, " +
-               $"Departure at - {DepartureAt:dd.MM.yyyy}, " +
-               $"Price - {Value}";
+        return $"Вылет из - {OriginCityIata}, " +
+               $"Прибытие в - {DestinationCityIata}, " +
+               $"Вылет - {DepartureAt:dd.MM.yyyy}, " +
+               $"Цена - {Value}\n" +
+               $"[Купить билет]({GetFullUrl()})";
+    }
+
+    private string GetFullUrl()
+    {
+        var baseUri = new Uri(SearchUrl);
+        return new Uri(baseUri, TicketLink).ToString();
     }
 }

@@ -35,8 +35,6 @@ public class NewSubscription : ICommand
             userIata[chatId] = new List<IataObject>();
         }
 
-
-
         switch (step)
         {
             case 1:
@@ -49,16 +47,24 @@ public class NewSubscription : ICommand
                     .Select(result => result.ToString())
                     .ToArray();
 
-                var keyboardMarkup = new KeyboardButton[res.Length][];
-                for (var i = 0; i < res.Length; i++)
+                if (res.Length > 0)
                 {
-                    keyboardMarkup[i] = new[] { new KeyboardButton(res[i]) };
+                    var keyboardMarkup = new KeyboardButton[res.Length][];
+                    for (var i = 0; i < res.Length; i++)
+                    {
+                        keyboardMarkup[i] = new[] { new KeyboardButton(res[i]) };
+                    }
+
+                    ReplyKeyboardMarkup step2Keyboard = new(keyboardMarkup) { ResizeKeyboard = true };
+                    await botClient.SendTextMessageAsync(chatId, "Выберите пункт отправления из списка",
+                        replyMarkup: step2Keyboard);
+                    userSteps[chatId] = step + 1;
+                }
+                else
+                {
+                    await botClient.SendTextMessageAsync(chatId, "Ничего не найдено, попробуйте еще раз");
                 }
 
-                ReplyKeyboardMarkup step2Keyboard = new(keyboardMarkup) { ResizeKeyboard = true };
-                await botClient.SendTextMessageAsync(chatId, "Выберите пункт отправления из списка",
-                    replyMarkup: step2Keyboard);
-                userSteps[chatId] = step + 1;
                 break;
             case 3:
                 var depCity = IataObject.GetObjectByString(message.Text);
@@ -91,6 +97,10 @@ public class NewSubscription : ICommand
                         replyMarkup: new ReplyKeyboardRemove());
                     userSteps[chatId] = step + 1;
                 }
+                else
+                {
+                    await botClient.SendTextMessageAsync(chatId, "Некорректный ввод");
+                }
 
                 break;
             case 5:
@@ -118,16 +128,24 @@ public class NewSubscription : ICommand
                     .Select(result => result.ToString())
                     .ToArray();
 
-                var keyboard6Markup = new KeyboardButton[res6Step.Length][];
-                for (var i = 0; i < res6Step.Length; i++)
+                if (res6Step.Length > 0)
                 {
-                    keyboard6Markup[i] = new[] { new KeyboardButton(res6Step[i]) };
+                    var keyboard6Markup = new KeyboardButton[res6Step.Length][];
+                    for (var i = 0; i < res6Step.Length; i++)
+                    {
+                        keyboard6Markup[i] = new[] { new KeyboardButton(res6Step[i]) };
+                    }
+
+                    ReplyKeyboardMarkup step6Keyboard = new(keyboard6Markup) { ResizeKeyboard = true };
+                    await botClient.SendTextMessageAsync(chatId, "Выберите пункт прибытия из списка",
+                        replyMarkup: step6Keyboard);
+                    userSteps[chatId] = step + 1;
+                }
+                else
+                {
+                    await botClient.SendTextMessageAsync(chatId, "Ничего не найдено, попробуйте еще раз");
                 }
 
-                ReplyKeyboardMarkup step6Keyboard = new(keyboard6Markup) { ResizeKeyboard = true };
-                await botClient.SendTextMessageAsync(chatId, "Выберите пункт прибытия из списка",
-                    replyMarkup: step6Keyboard);
-                userSteps[chatId] = step + 1;
                 break;
             case 7:
                 var arrCity = IataObject.GetObjectByString(message.Text);
@@ -165,6 +183,10 @@ public class NewSubscription : ICommand
 
                     userSteps[chatId] = step + 1;
                 }
+                else
+                {
+                    await botClient.SendTextMessageAsync(chatId, "Некорректный ввод");
+                }
 
                 break;
             case 9:
@@ -177,14 +199,12 @@ public class NewSubscription : ICommand
                             replyMarkup: new ReplyKeyboardRemove());
                         userSteps.Remove(chatId);
                         return true;
-                        break;
                     case "Cancel":
                         await botClient.SendTextMessageAsync(chatId,
                             "Ввод отменен",
                             replyMarkup: new ReplyKeyboardRemove());
                         userSteps.Remove(chatId);
                         return true;
-                        break;
                 }
 
                 break;

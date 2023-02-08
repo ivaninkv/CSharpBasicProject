@@ -4,6 +4,7 @@ using FlightsMetaSubscriber.App.Models;
 using FlightsMetaSubscriber.App.Repositories;
 using FlightsMetaSubscriber.App.Telegram;
 using Telegram.Bot;
+using Telegram.Bot.Types.Enums;
 
 namespace FlightsMetaSubscriber.App.Scheduler;
 
@@ -57,7 +58,7 @@ public class PricesUpdater : IInvocable
         {
             await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, "Результаты поиска по подписке:");
             await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, subscription.ToString());
-            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, minResult.ToString());
+            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, minResult.ToString(), ParseMode.MarkdownV2);
         }
         else
         {

@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace FlightsMetaSubscriber.App.Models;
 
 public class Subscription
