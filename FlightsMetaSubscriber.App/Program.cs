@@ -21,6 +21,7 @@ try
             services.AddSingleton<TgErrorHandler>();
             services.AddSingleton<TgUpdateHandler>();
             services.AddSingleton<Start>();
+            services.AddSingleton<Stop>();
             services.AddSingleton<Help>();
             services.AddSingleton<GetPrices>();
             services.AddSingleton<NewSubscription>();

@@ -13,7 +13,9 @@ public class Start : ICommand
             "Привет!\n\n" +
             "Сейчас бот знает следующие команды:\n" +
             "/newsubscription - создать новую подписку\n" +
-            "/mysubscriptions - просмотреть свои подписки");
+            "/mysubscriptions - просмотреть свои подписки\n" +
+            "/getprices - запустить поиск цен\n" +
+            "/stop - отписаться от всех подписок");
         UserRepository.Save(new TgUser(message.Chat.Id));
 
         return true;

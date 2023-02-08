@@ -9,6 +9,7 @@ public class TgUpdateHandler
 {
     private readonly ILogger<TgUpdateHandler> _logger;
     private readonly Start _start;
+    private readonly Stop _stop;
     private readonly Help _help;
     private readonly GetPrices _getPrices;
     private readonly NewSubscription _newSubscription;
@@ -16,11 +17,12 @@ public class TgUpdateHandler
     private readonly Dictionary<long, string> userCommands = new();
 
     public TgUpdateHandler(NewSubscription newSubscription, Start start, MySubscriptions mySubscriptions,
-        ILogger<TgUpdateHandler> logger, Help help, GetPrices getPrices)
+        ILogger<TgUpdateHandler> logger, Help help, GetPrices getPrices, Stop stop)
     {
         _logger = logger;
         _help = help;
         _getPrices = getPrices;
+        _stop = stop;
         _start = start;
         _newSubscription = newSubscription;
         _mySubscriptions = mySubscriptions;
@@ -49,6 +51,10 @@ public class TgUpdateHandler
         {
             case "/start":
                 await _start.Handle(botClient, message);
+                userCommands.Remove(chatId);
+                break;
+            case "/stop":
+                await _stop.Handle(botClient, message);
                 userCommands.Remove(chatId);
                 break;
             case "/help":

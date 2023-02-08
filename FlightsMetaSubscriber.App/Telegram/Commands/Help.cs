@@ -11,7 +11,8 @@ public class Help : ICommand
             "Сейчас бот знает следующие команды:\n" +
             "/newsubscription - создать новую подписку\n" +
             "/mysubscriptions - просмотреть свои подписки\n" +
-            "/getprices - запустить поиск цен");
+            "/getprices - запустить поиск цен\n" +
+            "/stop - отписаться от всех подписок");
 
         return true;
     }
