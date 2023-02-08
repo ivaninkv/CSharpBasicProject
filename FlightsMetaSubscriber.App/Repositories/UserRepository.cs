@@ -2,7 +2,6 @@ using Dapper;
 using FlightsMetaSubscriber.App.Models;
 using Npgsql;
 
-
 namespace FlightsMetaSubscriber.App.Repositories;
 
 public class UserRepository

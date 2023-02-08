@@ -34,6 +34,7 @@ public static class Config
         departure_at
 		value
 		ticket_link
+        number_of_changes
     }},
 ";
 }

@@ -18,8 +18,8 @@ public class SearchResultRepository
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string query =
-            $"insert into search_result (subscription_id, search_dt, origin, destination, departure_at, price, ticket_link, dt_offset) " +
-            $"values (@subscription_id, @search_dt, @origin, @destination, @departure_at, @price, @ticket_link, @dt_offset) returning id";
+            $"insert into search_result (subscription_id, search_dt, origin, destination, departure_at, price, ticket_link, dt_offset, number_of_changes) " +
+            $"values (@subscription_id, @search_dt, @origin, @destination, @departure_at, @price, @ticket_link, @dt_offset, @number_of_changes) returning id";
         var insertedId = conn.ExecuteScalar<int>(query, new
         {
             subscription_id = searchResult.SubscriptionId,
@@ -29,7 +29,8 @@ public class SearchResultRepository
             departure_at = searchResult.DepartureAt.UtcDateTime,
             price = searchResult.Value,
             ticket_link = searchResult.TicketLink,
-            dt_offset = searchResult.Offset
+            dt_offset = searchResult.Offset,
+            number_of_changes = searchResult.NumberOfChanges
         });
 
         return insertedId;

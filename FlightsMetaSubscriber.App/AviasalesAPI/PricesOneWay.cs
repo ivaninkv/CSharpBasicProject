@@ -25,7 +25,6 @@ public class PricesOneWay
             .AddHeader("X-Access-token", Config.AviaSalesApiToken)
             .AddParameter("application/json", BuildQuery(subscription), ParameterType.RequestBody);
 
-
         var searchResults = new List<SearchResult>();
         try
         {
@@ -46,12 +45,15 @@ public class PricesOneWay
     private List<SearchResult> DeserializeNodeList(NodeList nodeList, int subscriptionId)
     {
         return nodeList.Select(node => new SearchResult(
-            subscriptionId,
-            node.Value["origin_city_iata"].ToString(),
-            node.Value["destination_city_iata"].ToString(),
-            DateTimeOffset.ParseExact(node.Value["departure_at"].ToString(), "yyyy-MM-ddTHH:mm:sszzz", null),
-            double.Parse(node.Value["value"].ToString()),
-            node.Value["ticket_link"].ToString())).ToList();
+                subscriptionId,
+                node.Value["origin_city_iata"].ToString(),
+                node.Value["destination_city_iata"].ToString(),
+                DateTimeOffset.ParseExact(node.Value["departure_at"].ToString(), "yyyy-MM-ddTHH:mm:sszzz", null),
+                double.Parse(node.Value["value"].ToString()),
+                node.Value["ticket_link"].ToString(),
+                int.Parse(node.Value["number_of_changes"].ToString())
+            )
+        ).ToList();
     }
 
     private string BuildQuery(Subscription subscription)

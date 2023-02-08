@@ -18,7 +18,8 @@ create table subscription
         constraint subscription_users_id_fk
             references users,
     departure_min_date date,
-    departure_max_date date
+    departure_max_date date,
+    only_direct        boolean
 );
 
 alter table subscription
@@ -56,19 +57,20 @@ alter table destination
 
 create table search_result
 (
-    id              serial
+    id                serial
         constraint search_result_pk
             primary key,
-    subscription_id integer   not null
+    subscription_id   integer   not null
         constraint search_result_subscription_id_fk
             references subscription,
-    search_dt       timestamp not null,
-    origin          varchar   not null,
-    destination     varchar   not null,
-    departure_at    timestamp,
-    price           numeric,
-    ticket_link     varchar,
-    dt_offset       varchar
+    search_dt         timestamp not null,
+    origin            varchar   not null,
+    destination       varchar   not null,
+    departure_at      timestamp,
+    price             numeric,
+    ticket_link       varchar,
+    dt_offset         varchar,
+    number_of_changes integer
 );
 
 alter table search_result

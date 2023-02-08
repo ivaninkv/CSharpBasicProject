@@ -8,12 +8,14 @@ public class Subscription
     public List<IataObject> Destination { get; set; }
     public DateTime DepartureMinDate { get; set; }
     public DateTime DepartureMaxDate { get; set; }
+    public bool OnlyDirect { get; set; }
 
     public override string ToString()
     {
-        return $"Отправление - {string.Join(", ", Origin)}; " +
-               $"Прибытие - {string.Join(", ", Destination)}; " +
-               $"Вылет с - {DepartureMinDate:dd.MM.yyyy}; " +
-               $"Вылет по - {DepartureMaxDate:dd.MM.yyyy}.";
+        return $"Отправление - {string.Join(", ", Origin)}\n" +
+               $"Прибытие - {string.Join(", ", Destination)}\n" +
+               $"Вылет с - {DepartureMinDate:dd.MM.yyyy}\n" +
+               $"Вылет по - {DepartureMaxDate:dd.MM.yyyy}\n" +
+               $"Только прямые рейсы - {OnlyDirect}";
     }
 }
