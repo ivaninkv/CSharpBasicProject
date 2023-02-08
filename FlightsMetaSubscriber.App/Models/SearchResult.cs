@@ -41,7 +41,6 @@ public class SearchResult
 
     private string GetFullUrl()
     {
-        var baseUri = new Uri(SearchUrl);
-        return new Uri(baseUri, TicketLink).ToString();
+        return SearchUrl + TicketLink;
     }
 }

@@ -58,7 +58,8 @@ public class PricesUpdater : IInvocable
         {
             await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, "Результаты поиска по подписке:");
             await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, subscription.ToString());
-            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, minResult.ToString(), ParseMode.MarkdownV2);
+            _logger.LogDebug("Search result - {@minResult}", minResult.ToString());
+            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, minResult.ToString(), ParseMode.Markdown);
         }
         else
         {
