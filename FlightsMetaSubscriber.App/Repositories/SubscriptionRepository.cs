@@ -6,13 +6,29 @@ namespace FlightsMetaSubscriber.App.Repositories;
 
 public class SubscriptionRepository
 {
+    public static List<Subscription> GetOverdueSubscriptions()
+    {
+        using var conn = new NpgsqlConnection(Config.ConnectionString);
+        const string query =
+            "select id Id, user_id UserId, departure_min_date DepartureMinDate, departure_max_date DepartureMaxDate, only_direct OnlyDirect, active Active " +
+            "from subscription " +
+            "where departure_max_date < @max_date";
+        var subscriptions = conn.Query<Subscription>(query, new
+        {
+            max_date = DateTime.Today
+        }).ToList();
+
+        return subscriptions;
+    }
+
     public static List<Subscription> GetByUserId(long userId)
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string query =
             "select id Id, user_id UserId, departure_min_date DepartureMinDate, departure_max_date DepartureMaxDate, only_direct OnlyDirect, active Active " +
             "from subscription " +
-            "where user_id = @user_id";
+            "where user_id = @user_id " +
+            "   and active = true";
         var subscriptions = conn.Query<Subscription>(query, new { user_id = userId }).ToList();
 
         foreach (var subscription in subscriptions)

@@ -30,6 +30,7 @@ try
             services.AddScoped<PricesOneWay>();
             services.AddHostedService<Worker>();
             services.AddTransient<PricesUpdater>();
+            services.AddTransient<OverdueSubscriptionDisabler>();
             services.AddScheduler();
         })
         .UseSerilog()
@@ -43,6 +44,13 @@ try
             var updater = scope.ServiceProvider.GetRequiredService<PricesUpdater>();
             await updater.Invoke();
         }).DailyAt(4, 0);
+
+        scheduler.ScheduleAsync(async () =>
+        {
+            using var scope = host.Services.CreateScope();
+            var updater = scope.ServiceProvider.GetRequiredService<OverdueSubscriptionDisabler>();
+            await updater.Invoke();
+        }).Daily();
     });
 
     await host.RunAsync();
