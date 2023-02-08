@@ -31,23 +31,28 @@ public class PricesUpdater : IInvocable
 
         foreach (var tgUser in tgUsers)
         {
-            var userSubscriptions = SubscriptionRepository.GetByUserId(tgUser.Id);
+            await UpdatePricesByUser(tgUser.Id);
+        }
+    }
 
-            _logger.LogInformation("{@qty} subscriptions found of {@user} user",
-                userSubscriptions.Count, tgUser.Id);
+    public async Task UpdatePricesByUser(long chatId)
+    {
+        var userSubscriptions = SubscriptionRepository.GetByUserId(chatId);
 
-            foreach (var subscription in userSubscriptions)
-            {
-                var pricesForSubscription = await _pricesOneWay.FindPricesForSubscription(subscription);
+        _logger.LogInformation("{@qty} subscriptions found of {@user} user",
+            userSubscriptions.Count, chatId);
 
-                _logger.LogInformation("Found {@qty} search results", pricesForSubscription.Count);
+        foreach (var subscription in userSubscriptions)
+        {
+            var pricesForSubscription = await _pricesOneWay.FindPricesForSubscription(subscription);
 
-                SearchResultRepository.SaveAll(pricesForSubscription);
+            _logger.LogInformation("Found {@qty} search results", pricesForSubscription.Count);
 
-                _logger.LogInformation("Price update completed");
+            SearchResultRepository.SaveAll(pricesForSubscription);
 
-                SendMinPriceBySubscription(subscription, pricesForSubscription);
-            }
+            _logger.LogInformation("Price update completed");
+
+            SendMinPriceBySubscription(subscription, pricesForSubscription);
         }
     }
 
