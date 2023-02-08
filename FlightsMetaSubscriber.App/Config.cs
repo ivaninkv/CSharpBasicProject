@@ -20,7 +20,7 @@ public static class Config
         depart_date_min: \""{3}\"",
         depart_date_max: \""{4}\"",
         no_lowcost: false,
-        direct: true
+        direct: {5}
     }},
     grouping: NONE,
     paging: {{

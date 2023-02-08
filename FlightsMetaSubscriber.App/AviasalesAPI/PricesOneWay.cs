@@ -69,7 +69,8 @@ public class PricesOneWay
                     origin.Code,
                     destination.Code,
                     subscription.DepartureMinDate.ToString("yyyy-MM-dd"),
-                    subscription.DepartureMaxDate.ToString("yyyy-MM-dd")));
+                    subscription.DepartureMaxDate.ToString("yyyy-MM-dd"),
+                    subscription.OnlyDirect.ToString().ToLower()));
             }
         }
 
