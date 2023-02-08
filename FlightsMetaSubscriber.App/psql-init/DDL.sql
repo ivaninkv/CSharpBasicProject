@@ -19,7 +19,8 @@ create table subscription
             references users,
     departure_min_date date,
     departure_max_date date,
-    only_direct        boolean
+    only_direct        boolean,
+    active             boolean
 );
 
 alter table subscription

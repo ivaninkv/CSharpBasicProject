@@ -10,25 +10,25 @@ public class SubscriptionRepository
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string query =
-            $"select id Id, user_id UserId, departure_min_date DepartureMinDate, departure_max_date DepartureMaxDate, only_direct OnlyDirect " +
-            $"from subscription " +
-            $"where user_id = @user_id";
+            "select id Id, user_id UserId, departure_min_date DepartureMinDate, departure_max_date DepartureMaxDate, only_direct OnlyDirect, active Active " +
+            "from subscription " +
+            "where user_id = @user_id";
         var subscriptions = conn.Query<Subscription>(query, new { user_id = userId }).ToList();
 
         foreach (var subscription in subscriptions)
         {
             const string originQuery =
-                $"select iata_code Code, iata_name Name " +
-                $"from origin " +
-                $"where subscribe_id = @subscription_id";
+                "select iata_code Code, iata_name Name " +
+                "from origin " +
+                "where subscribe_id = @subscription_id";
             subscription.Origin =
                 conn.Query<IataObject>(originQuery, new { subscription_id = subscription.Id })
                     .ToList();
 
             const string destinationQuery =
-                $"select iata_code Code, iata_name Name " +
-                $"from destination " +
-                $"where subscribe_id = @subscription_id";
+                "select iata_code Code, iata_name Name " +
+                "from destination " +
+                "where subscribe_id = @subscription_id";
             subscription.Destination =
                 conn.Query<IataObject>(destinationQuery, new { subscription_id = subscription.Id })
                     .ToList();
@@ -41,19 +41,20 @@ public class SubscriptionRepository
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string subscriptionQuery =
-            $"insert into subscription(user_id, departure_min_date, departure_max_date, only_direct) " +
-            $"values (@user_id, @departure_min_date, @departure_max_date, @only_direct) returning id";
+            "insert into subscription(user_id, departure_min_date, departure_max_date, only_direct, active) " +
+            "values (@user_id, @departure_min_date, @departure_max_date, @only_direct, @active) returning id";
         var insertedId = conn.ExecuteScalar<int>(subscriptionQuery, new
         {
             user_id = subscription.UserId,
             departure_min_date = subscription.DepartureMinDate,
             departure_max_date = subscription.DepartureMaxDate,
-            only_direct = subscription.OnlyDirect
+            only_direct = subscription.OnlyDirect,
+            active = subscription.Active
         });
 
 
-        const string originQuery = $"insert into origin(subscribe_id, user_id, iata_code, iata_name) " +
-                                   $"values (@subscribe_id, @user_id, @iata_code, @iata_name)";
+        const string originQuery = "insert into origin(subscribe_id, user_id, iata_code, iata_name) " +
+                                   "values (@subscribe_id, @user_id, @iata_code, @iata_name)";
         foreach (var iataObject in subscription.Origin)
         {
             conn.Execute(originQuery, new
@@ -65,8 +66,8 @@ public class SubscriptionRepository
             });
         }
 
-        const string destinationQuery = $"insert into destination(subscribe_id, user_id, iata_code, iata_name) " +
-                                        $"values (@subscribe_id, @user_id, @iata_code, @iata_name)";
+        const string destinationQuery = "insert into destination(subscribe_id, user_id, iata_code, iata_name) " +
+                                        "values (@subscribe_id, @user_id, @iata_code, @iata_name)";
         foreach (var iataObject in subscription.Destination)
         {
             conn.Execute(destinationQuery, new

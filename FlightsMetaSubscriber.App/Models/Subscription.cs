@@ -9,6 +9,7 @@ public class Subscription
     public DateTime DepartureMinDate { get; set; }
     public DateTime DepartureMaxDate { get; set; }
     public bool OnlyDirect { get; set; }
+    public bool Active { get; set; }
 
     public override string ToString()
     {
