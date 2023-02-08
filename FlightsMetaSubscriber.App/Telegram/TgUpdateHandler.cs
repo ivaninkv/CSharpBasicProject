@@ -50,31 +50,73 @@ public class TgUpdateHandler
         switch (command)
         {
             case "/start":
-                await _start.Handle(botClient, message);
+                try
+                {
+                    await _start.Handle(botClient, message);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogInformation("Command {@command}, exception message: {@message}", "start", e.Message);
+                }
                 userCommands.Remove(chatId);
                 break;
             case "/stop":
-                await _stop.Handle(botClient, message);
+                try
+                {
+                    await _stop.Handle(botClient, message);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogInformation("Command {@command}, exception message: {@message}", "stop", e.Message);
+                }
                 userCommands.Remove(chatId);
                 break;
             case "/help":
-                await _help.Handle(botClient, message);
+                try
+                {
+                    await _help.Handle(botClient, message);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogInformation("Command {@command}, exception message: {@message}", "help", e.Message);
+                }
                 userCommands.Remove(chatId);
                 break;
             case "/getprices":
-                await _getPrices.Handle(botClient, message);
+                try
+                {
+                    await _getPrices.Handle(botClient, message);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogInformation("Command {@command}, exception message: {@message}", "getprices", e.Message);
+                }
                 userCommands.Remove(chatId);
                 break;
             case "/newsubscription":
-                var completed = await _newSubscription.Handle(botClient, message);
-                if (completed)
+                try
                 {
-                    userCommands.Remove(chatId);
+                    var completed = await _newSubscription.Handle(botClient, message);
+                    if (completed)
+                    {
+                        userCommands.Remove(chatId);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogInformation("Command {@command}, exception message: {@message}", "newsubscription", e.Message);
                 }
 
                 break;
             case "/mysubscriptions":
-                await _mySubscriptions.Handle(botClient, message);
+                try
+                {
+                    await _mySubscriptions.Handle(botClient, message);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogInformation("Command {@command}, exception message: {@message}", "mysubscriptions", e.Message);
+                }
                 userCommands.Remove(chatId);
                 break;
             default:

@@ -54,6 +54,11 @@ public class PricesUpdater : IInvocable
 
             SendMinPriceBySubscription(subscription, pricesForSubscription);
         }
+
+        if (userSubscriptions.Count == 0)
+        {
+            await _tgBotClient.BotClient.SendTextMessageAsync(chatId, "У вас пока нет подписок");
+        }
     }
 
     private async Task SendMinPriceBySubscription(Subscription subscription, List<SearchResult> searchResults)

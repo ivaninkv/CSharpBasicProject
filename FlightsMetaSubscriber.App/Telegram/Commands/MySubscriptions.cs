@@ -15,6 +15,11 @@ public class MySubscriptions : ICommand
             await botClient.SendTextMessageAsync(chatId, subscription.ToString());
         }
 
+        if (subscriptions.Count == 0)
+        {
+            await botClient.SendTextMessageAsync(chatId, "У вас пока нет подписок");
+        }
+
         return true;
     }
 }
