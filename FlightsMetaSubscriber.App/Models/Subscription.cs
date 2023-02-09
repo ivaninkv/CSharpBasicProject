@@ -25,8 +25,8 @@ public class Subscription
 
     public int Id { get; set; }
     public long UserId { get; set; }
-    public List<IataObject> Origin { get; set; }
-    public List<IataObject> Destination { get; set; }
+    public List<IataObject> Origin { get; set; } = new();
+    public List<IataObject> Destination { get; set; } = new();
     public DateTime DepartureMinDate { get; set; }
     public DateTime DepartureMaxDate { get; set; }
     public bool OnlyDirect { get; set; }
