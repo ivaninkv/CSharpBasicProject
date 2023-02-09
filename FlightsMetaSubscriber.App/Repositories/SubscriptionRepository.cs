@@ -94,5 +94,8 @@ public class SubscriptionRepository
                 iata_name = iataObject.Name
             });
         }
+
+        var tgUser = new TgUser(subscription.UserId, true);
+        UserRepository.Save(tgUser);
     }
 }
