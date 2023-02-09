@@ -34,10 +34,11 @@ public class Subscription
 
     public override string ToString()
     {
-        return $"Отправление - {string.Join(", ", Origin)}\n" +
+        return $"ID = {Id}\n" +
+               $"Отправление - {string.Join(", ", Origin)}\n" +
                $"Прибытие - {string.Join(", ", Destination)}\n" +
                $"Вылет с - {DepartureMinDate:dd.MM.yyyy}\n" +
                $"Вылет по - {DepartureMaxDate:dd.MM.yyyy}\n" +
-               $"Только прямые рейсы - {OnlyDirect}";
+               $"Только прямые рейсы - {OnlyDirect}\n";
     }
 }

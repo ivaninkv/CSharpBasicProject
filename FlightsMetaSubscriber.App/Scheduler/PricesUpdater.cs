@@ -66,15 +66,17 @@ public class PricesUpdater : IInvocable
         var minResult = searchResults.OrderBy(result => result.Value).FirstOrDefault(new SearchResult());
         if (minResult.Value > 0)
         {
-            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, "Результаты поиска по подписке:");
-            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, subscription.ToString());
+            var message = "Результаты поиска по подписке:\n" +
+                          $"{subscription}" +
+                          $"{minResult}";
+
             _logger.LogDebug("Search result - {@minResult}", minResult.ToString());
-            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, minResult.ToString(), ParseMode.Markdown);
+            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, message, ParseMode.Markdown);
         }
         else
         {
-            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, "Билетов по вашей подписке не найдено");
-            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, subscription.ToString());
+            await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId,
+                $"Билетов по вашей подписке не найдено\n {subscription}");
         }
 
     }
