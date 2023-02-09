@@ -217,12 +217,14 @@ public class NewSubscription : ICommand
                             "Подписка сохранена",
                             replyMarkup: new ReplyKeyboardRemove());
                         _userSteps.Remove(chatId);
+                        _userSubscription.Remove(chatId);
                         return true;
                     case "Cancel":
                         await botClient.SendTextMessageAsync(chatId,
                             "Ввод отменен",
                             replyMarkup: new ReplyKeyboardRemove());
                         _userSteps.Remove(chatId);
+                        _userSubscription.Remove(chatId);
                         return true;
                 }
 
