@@ -6,6 +6,21 @@ namespace FlightsMetaSubscriber.App.Repositories;
 
 public class SubscriptionRepository
 {
+    public static void DisableSubscription(Subscription subscription)
+    {
+        using var conn = new NpgsqlConnection(Config.ConnectionString);
+        const string query =
+            "update subscription " +
+            "set active = false " +
+            "where user_id = @user_id " +
+            "   and id = @id";
+        conn.Execute(query, new
+        {
+            user_id = subscription.UserId,
+            id = subscription.Id
+        });
+    }
+
     public static List<Subscription> GetOverdueSubscriptions()
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);

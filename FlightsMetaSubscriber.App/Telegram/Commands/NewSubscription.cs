@@ -195,7 +195,7 @@ public class NewSubscription : ICommand
                         })
                         { ResizeKeyboard = true };
                     await botClient.SendTextMessageAsync(chatId, "Подтвердите параметры подписки");
-                    await botClient.SendTextMessageAsync(chatId, _userSubscription.ToString(),
+                    await botClient.SendTextMessageAsync(chatId, _userSubscription[chatId].ToString(),
                         ParseMode.Markdown,
                         replyMarkup: step10Keyboard);
 

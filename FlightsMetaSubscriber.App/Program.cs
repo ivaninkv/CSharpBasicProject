@@ -24,6 +24,7 @@ using var host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<GetPrices>();
         services.AddSingleton<NewSubscription>();
         services.AddSingleton<MySubscriptions>();
+        services.AddSingleton<DelSubscription>();
         services.AddScoped<Autocomplete>();
         services.AddScoped<PricesOneWay>();
         services.AddHostedService<Worker>();

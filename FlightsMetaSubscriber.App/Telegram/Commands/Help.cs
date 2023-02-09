@@ -11,6 +11,7 @@ public class Help : ICommand
             "Сейчас бот знает следующие команды:\n" +
             "/newsubscription - создать новую подписку\n" +
             "/mysubscriptions - просмотреть свои подписки\n" +
+            // "/delete {number} - удалить подписку под номером number\n" +
             "/getprices - запустить поиск цен\n" +
             "/stop - отписаться от всех подписок");
 

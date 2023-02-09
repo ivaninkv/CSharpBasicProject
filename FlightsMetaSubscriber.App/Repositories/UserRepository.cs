@@ -18,14 +18,17 @@ public class UserRepository
             active = user.Active
         });
 
-        const string subscriptionQuery = "update subscription " +
-                                         "set active = @active " +
-                                         "where user_id = @user_id";
-        conn.Execute(subscriptionQuery, new
+        if (!user.Active)
         {
-            active = user.Active,
-            user_id = user.Id
-        });
+            const string subscriptionQuery = "update subscription " +
+                                             "set active = @active " +
+                                             "where user_id = @user_id";
+            conn.Execute(subscriptionQuery, new
+            {
+                active = user.Active,
+                user_id = user.Id
+            });
+        }
     }
 
     public static List<TgUser> GetActiveUsers()
