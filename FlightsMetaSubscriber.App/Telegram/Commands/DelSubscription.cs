@@ -1,6 +1,7 @@
 using FlightsMetaSubscriber.App.Repositories;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace FlightsMetaSubscriber.App.Telegram.Commands;
 
@@ -13,15 +14,19 @@ public class DelSubscription : ICommand
             var subscriptionId = int.Parse(message.Text.Split(" ")[1]);
             var subscriptions = SubscriptionRepository.GetByUserId(message.Chat.Id);
             var subscription = subscriptions.First(s => s.Id == subscriptionId);
-            SubscriptionRepository.DisableSubscription(subscription);
+            if (SubscriptionRepository.DisableSubscription(subscription))
+            {
+                botClient.SendTextMessageAsync(message.Chat.Id,
+                "Подписка успешно удалена");
+            }
         }
         catch (Exception e)
         {
             botClient.SendTextMessageAsync(message.Chat.Id,
                 "Некорректный ввод\n" +
                 "Введите команду в формате:\n" +
-                "/delete **number**,\n" +
-                "где **number** - ID подписки");
+                "/delete *number*,\n" +
+                "где *number* - ID подписки", ParseMode.Markdown);
         }
 
         return true;

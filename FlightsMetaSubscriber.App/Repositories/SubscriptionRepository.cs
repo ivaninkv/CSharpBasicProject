@@ -6,7 +6,7 @@ namespace FlightsMetaSubscriber.App.Repositories;
 
 public class SubscriptionRepository
 {
-    public static void DisableSubscription(Subscription subscription)
+    public static bool DisableSubscription(Subscription subscription)
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string query =
@@ -19,6 +19,8 @@ public class SubscriptionRepository
             user_id = subscription.UserId,
             id = subscription.Id
         });
+
+        return true;
     }
 
     public static List<Subscription> GetOverdueSubscriptions()

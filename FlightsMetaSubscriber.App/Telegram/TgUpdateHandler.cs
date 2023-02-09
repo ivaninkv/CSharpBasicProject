@@ -14,15 +14,17 @@ public class TgUpdateHandler
     private readonly GetPrices _getPrices;
     private readonly NewSubscription _newSubscription;
     private readonly MySubscriptions _mySubscriptions;
+    private readonly DelSubscription _delSubscription;
     private readonly Dictionary<long, string> userCommands = new();
 
     public TgUpdateHandler(NewSubscription newSubscription, Start start, MySubscriptions mySubscriptions,
-        ILogger<TgUpdateHandler> logger, Help help, GetPrices getPrices, Stop stop)
+        ILogger<TgUpdateHandler> logger, Help help, GetPrices getPrices, Stop stop, DelSubscription delSubscription)
     {
         _logger = logger;
         _help = help;
         _getPrices = getPrices;
         _stop = stop;
+        _delSubscription = delSubscription;
         _start = start;
         _newSubscription = newSubscription;
         _mySubscriptions = mySubscriptions;
@@ -116,6 +118,17 @@ public class TgUpdateHandler
                 catch (Exception e)
                 {
                     _logger.LogInformation("Command {@command}, exception message: {@message}", "mysubscriptions", e.Message);
+                }
+                userCommands.Remove(chatId);
+                break;
+            case var _ when command.Contains("/delete"):
+                try
+                {
+                    await _delSubscription.Handle(botClient, message);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogInformation("Command {@command}, exception message: {@message}", "delete", e.Message);
                 }
                 userCommands.Remove(chatId);
                 break;
