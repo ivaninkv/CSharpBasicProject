@@ -77,7 +77,7 @@ public class PricesUpdater : IInvocable
         else
         {
             await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId,
-                $"Билетов по вашей подписке не найдено\n {subscription}");
+                $"Билетов по вашей подписке не найдено\n{subscription}");
         }
 
     }
