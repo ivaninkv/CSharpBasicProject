@@ -1,6 +1,7 @@
 using FlightsMetaSubscriber.App.Repositories;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace FlightsMetaSubscriber.App.Telegram.Commands;
 
@@ -12,7 +13,7 @@ public class MySubscriptions : ICommand
         var subscriptions = SubscriptionRepository.GetByUserId(chatId);
         foreach (var subscription in subscriptions)
         {
-            await botClient.SendTextMessageAsync(chatId, subscription.ToString());
+            await botClient.SendTextMessageAsync(chatId, subscription.ToString(), ParseMode.Markdown);
         }
 
         if (subscriptions.Count == 0)
