@@ -13,11 +13,10 @@ public class NewSubscription : ICommand
 {
     private readonly ILogger<TgUpdateHandler> _logger;
     private readonly Autocomplete _autocomplete;
-    private readonly Dictionary<long, int> userSteps = new();
-    private readonly Dictionary<long, List<IataObject>> userIata = new();
+    private readonly Dictionary<long, int> _userSteps = new();
+    private readonly Dictionary<long, Subscription> _userSubscription = new();
     private DateTime _departureMinDate;
     private DateTime _departureMaxDate;
-    private readonly Subscription _subscription = new();
 
     public NewSubscription(ILogger<TgUpdateHandler> logger, Autocomplete autocomplete)
     {
@@ -28,11 +27,10 @@ public class NewSubscription : ICommand
     public async Task<bool> Handle(ITelegramBotClient botClient, Message message)
     {
         var chatId = message.Chat.Id;
-        _subscription.UserId = chatId;
-        var step = userSteps.ContainsKey(chatId) ? userSteps[chatId] : 1;
-        if (!userIata.ContainsKey(chatId))
+        var step = _userSteps.ContainsKey(chatId) ? _userSteps[chatId] : 1;
+        if (!_userSubscription.ContainsKey(chatId))
         {
-            userIata[chatId] = new List<IataObject>();
+            _userSubscription[chatId] = new Subscription(chatId);
         }
 
         switch (step)
@@ -40,7 +38,7 @@ public class NewSubscription : ICommand
             case 1:
                 await botClient.SendTextMessageAsync(chatId,
                     "Введите город вылета");
-                userSteps[chatId] = step + 1;
+                _userSteps[chatId] = step + 1;
                 break;
             case 2:
                 var res = (await _autocomplete.GetIataCodeByName(message.Text))
@@ -58,7 +56,7 @@ public class NewSubscription : ICommand
                     ReplyKeyboardMarkup step2Keyboard = new(keyboardMarkup) { ResizeKeyboard = true };
                     await botClient.SendTextMessageAsync(chatId, "Выберите пункт отправления из списка",
                         replyMarkup: step2Keyboard);
-                    userSteps[chatId] = step + 1;
+                    _userSteps[chatId] = step + 1;
                 }
                 else
                 {
@@ -68,7 +66,7 @@ public class NewSubscription : ICommand
                 break;
             case 3:
                 var depCity = IataObject.GetObjectByString(message.Text);
-                userIata[chatId].Add(depCity);
+                _userSubscription[chatId].Origin.Add(depCity);
                 ReplyKeyboardMarkup step3Keyboard = new(new[]
                     {
                         new KeyboardButton[] { "Добавить город вылета", "Перейти к вводу дат" },
@@ -76,7 +74,7 @@ public class NewSubscription : ICommand
                     { ResizeKeyboard = true };
                 await botClient.SendTextMessageAsync(chatId, "Выберите следующее действие",
                     replyMarkup: step3Keyboard);
-                userSteps[chatId] = step + 1;
+                _userSteps[chatId] = step + 1;
                 break;
             case 4:
                 if (message.Text.Equals("Добавить город вылета"))
@@ -84,18 +82,15 @@ public class NewSubscription : ICommand
                     await botClient.SendTextMessageAsync(chatId,
                         "Введите город вылета",
                         replyMarkup: new ReplyKeyboardRemove());
-                    userSteps[chatId] = 2;
+                    _userSteps[chatId] = 2;
                 }
                 else if (message.Text.Equals("Перейти к вводу дат"))
                 {
-                    _subscription.Origin = userIata[chatId];
-                    userIata[chatId] = new List<IataObject>();
-
                     await botClient.SendTextMessageAsync(chatId,
                         "Введите диапазон дат в формате: 'dd.MM.yyyy-dd.MM.yyyy'\n" +
                         "Например: <code>01.05.2023-14.05.2023</code>", ParseMode.Html,
                         replyMarkup: new ReplyKeyboardRemove());
-                    userSteps[chatId] = step + 1;
+                    _userSteps[chatId] = step + 1;
                 }
                 else
                 {
@@ -116,12 +111,12 @@ public class NewSubscription : ICommand
                     break;
                 }
 
-                _subscription.DepartureMinDate = _departureMinDate;
-                _subscription.DepartureMaxDate = _departureMaxDate;
+                _userSubscription[chatId].DepartureMinDate = _departureMinDate;
+                _userSubscription[chatId].DepartureMaxDate = _departureMaxDate;
 
                 botClient.SendTextMessageAsync(chatId, "Введите город прибытия");
 
-                userSteps[chatId] = step + 1;
+                _userSteps[chatId] = step + 1;
                 break;
             case 6:
                 var res6Step = (await _autocomplete.GetIataCodeByName(message.Text))
@@ -139,7 +134,7 @@ public class NewSubscription : ICommand
                     ReplyKeyboardMarkup step6Keyboard = new(keyboard6Markup) { ResizeKeyboard = true };
                     await botClient.SendTextMessageAsync(chatId, "Выберите пункт прибытия из списка",
                         replyMarkup: step6Keyboard);
-                    userSteps[chatId] = step + 1;
+                    _userSteps[chatId] = step + 1;
                 }
                 else
                 {
@@ -149,7 +144,7 @@ public class NewSubscription : ICommand
                 break;
             case 7:
                 var arrCity = IataObject.GetObjectByString(message.Text);
-                userIata[chatId].Add(arrCity);
+                _userSubscription[chatId].Destination.Add(arrCity);
                 ReplyKeyboardMarkup step7Keyboard = new(new[]
                     {
                         new KeyboardButton[] { "Добавить город прибытия", "Следующий шаг" },
@@ -157,7 +152,7 @@ public class NewSubscription : ICommand
                     { ResizeKeyboard = true };
                 await botClient.SendTextMessageAsync(chatId, "Выберите действие",
                     replyMarkup: step7Keyboard);
-                userSteps[chatId] = step + 1;
+                _userSteps[chatId] = step + 1;
                 break;
             case 8:
                 if (message.Text.Equals("Добавить город прибытия"))
@@ -165,7 +160,7 @@ public class NewSubscription : ICommand
                     await botClient.SendTextMessageAsync(chatId,
                         "Добавить город прибытия",
                         replyMarkup: new ReplyKeyboardRemove());
-                    userSteps[chatId] = 6;
+                    _userSteps[chatId] = 6;
                 }
                 else if (message.Text.Equals("Следующий шаг"))
                 {
@@ -176,7 +171,7 @@ public class NewSubscription : ICommand
                         { ResizeKeyboard = true };
                     await botClient.SendTextMessageAsync(chatId, "Искать только прямые рейсы?",
                         replyMarkup: step8Keyboard);
-                    userSteps[chatId] = step + 1;
+                    _userSteps[chatId] = step + 1;
                 }
                 else
                 {
@@ -188,14 +183,11 @@ public class NewSubscription : ICommand
             case 9:
                 if (message.Text.Equals("Да") || message.Text.Equals("Нет"))
                 {
-                    _subscription.OnlyDirect = message.Text switch
+                    _userSubscription[chatId].OnlyDirect = message.Text switch
                     {
                         "Да" => true,
                         "Нет" => false
                     };
-
-                    _subscription.Destination = userIata[chatId];
-                    userIata[chatId] = new List<IataObject>();
 
                     ReplyKeyboardMarkup step10Keyboard = new(new[]
                         {
@@ -203,11 +195,11 @@ public class NewSubscription : ICommand
                         })
                         { ResizeKeyboard = true };
                     await botClient.SendTextMessageAsync(chatId, "Подтвердите параметры подписки");
-                    await botClient.SendTextMessageAsync(chatId, _subscription.ToString(),
+                    await botClient.SendTextMessageAsync(chatId, _userSubscription.ToString(),
                         ParseMode.Markdown,
                         replyMarkup: step10Keyboard);
 
-                    userSteps[chatId] = step + 1;
+                    _userSteps[chatId] = step + 1;
                 }
                 else
                 {
@@ -220,17 +212,17 @@ public class NewSubscription : ICommand
                 switch (message.Text)
                 {
                     case "OK":
-                        SubscriptionRepository.Save(_subscription);
+                        SubscriptionRepository.Save(_userSubscription[chatId]);
                         await botClient.SendTextMessageAsync(chatId,
                             "Подписка сохранена",
                             replyMarkup: new ReplyKeyboardRemove());
-                        userSteps.Remove(chatId);
+                        _userSteps.Remove(chatId);
                         return true;
                     case "Cancel":
                         await botClient.SendTextMessageAsync(chatId,
                             "Ввод отменен",
                             replyMarkup: new ReplyKeyboardRemove());
-                        userSteps.Remove(chatId);
+                        _userSteps.Remove(chatId);
                         return true;
                 }
 
