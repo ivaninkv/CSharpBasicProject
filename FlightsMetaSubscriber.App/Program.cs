@@ -42,7 +42,7 @@ host.Services.UseScheduler(scheduler =>
         using var scope = host.Services.CreateScope();
         var updater = scope.ServiceProvider.GetRequiredService<PricesUpdater>();
         await updater.Invoke();
-    }).DailyAt(4, 0);
+    }).DailyAt(7, 0);
 
     scheduler.ScheduleAsync(async () =>
     {
