@@ -42,18 +42,26 @@ public class PricesUpdater : IInvocable
         _logger.LogInformation("{@qty} subscriptions found of {@user} user",
             userSubscriptions.Count, chatId);
 
+        double sumSubscriptions = 0;
+        
         foreach (var subscription in userSubscriptions)
         {
-            var pricesForSubscription = await _pricesOneWay.FindPricesForSubscription(subscription);
+            var pricesForSubscription = await _pricesOneWay.FindPricesForSubscription(subscription);            
+            var minResult = pricesForSubscription.OrderBy(result => result.Value).FirstOrDefault(new SearchResult());
 
             _logger.LogInformation("Found {@qty} search results", pricesForSubscription.Count);
 
             SearchResultRepository.SaveAll(pricesForSubscription);
+            SendMinPriceBySubscription(subscription, minResult);
+            sumSubscriptions += minResult.Value;
 
-            _logger.LogInformation("Price update completed");
-
-            SendMinPriceBySubscription(subscription, pricesForSubscription);
+            _logger.LogInformation("Price update completed");            
         }
+        
+        if (sumSubscriptions > 0)
+        {
+            await _tgBotClient.BotClient.SendTextMessageAsync(chatId, $"Сумма билетов по всем вашим подпискам = {sumSubscriptions}");
+        }        
 
         if (userSubscriptions.Count == 0)
         {
@@ -61,9 +69,8 @@ public class PricesUpdater : IInvocable
         }
     }
 
-    private async Task SendMinPriceBySubscription(Subscription subscription, List<SearchResult> searchResults)
-    {
-        var minResult = searchResults.OrderBy(result => result.Value).FirstOrDefault(new SearchResult());
+    private async Task SendMinPriceBySubscription(Subscription subscription, SearchResult minResult)
+    {        
         if (minResult.Value > 0)
         {
             var message = "Результаты поиска по подписке:\n" +
