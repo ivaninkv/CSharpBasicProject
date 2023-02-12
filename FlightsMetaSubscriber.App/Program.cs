@@ -41,14 +41,30 @@ host.Services.UseScheduler(scheduler =>
     {
         using var scope = host.Services.CreateScope();
         var updater = scope.ServiceProvider.GetRequiredService<PricesUpdater>();
-        await updater.Invoke();
+        try
+        {
+            await updater.Invoke();
+        }
+        catch (Exception e)
+        {
+            Log.Logger.Warning("PricesUpdater return error: {@ErrorMessage}",
+                e.Message);
+        }
     }).DailyAt(7, 0);
 
     scheduler.ScheduleAsync(async () =>
     {
         using var scope = host.Services.CreateScope();
-        var updater = scope.ServiceProvider.GetRequiredService<OverdueSubscriptionDisabler>();
-        await updater.Invoke();
+        var disabler = scope.ServiceProvider.GetRequiredService<OverdueSubscriptionDisabler>();
+        try
+        {
+            await disabler.Invoke();
+        }
+        catch (Exception e)
+        {
+            Log.Logger.Warning("OverdueSubscriptionDisabler return error: {@ErrorMessage}",
+                e.Message);
+        }
     }).Daily();
 });
 try

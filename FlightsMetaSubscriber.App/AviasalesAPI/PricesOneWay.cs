@@ -36,7 +36,7 @@ public class PricesOneWay
         }
         catch (Exception e)
         {
-            _logger.LogInformation("Error from AviaSales, message: {@ErrorMessage}", e.Message);
+            _logger.LogWarning("Error from AviaSales, message: {@ErrorMessage}", e.Message);
         }
 
         return searchResults;

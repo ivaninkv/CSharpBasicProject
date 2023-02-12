@@ -58,7 +58,7 @@ public class TgUpdateHandler
                 }
                 catch (Exception e)
                 {
-                    _logger.LogInformation("Command {@command}, exception message: {@message}", "start", e.Message);
+                    _logger.LogWarning("Command {@command}, exception message: {@message}", "start", e.Message);
                 }
                 userCommands.Remove(chatId);
                 break;
@@ -69,7 +69,7 @@ public class TgUpdateHandler
                 }
                 catch (Exception e)
                 {
-                    _logger.LogInformation("Command {@command}, exception message: {@message}", "stop", e.Message);
+                    _logger.LogWarning("Command {@command}, exception message: {@message}", "stop", e.Message);
                 }
                 userCommands.Remove(chatId);
                 break;
@@ -80,7 +80,7 @@ public class TgUpdateHandler
                 }
                 catch (Exception e)
                 {
-                    _logger.LogInformation("Command {@command}, exception message: {@message}", "help", e.Message);
+                    _logger.LogWarning("Command {@command}, exception message: {@message}", "help", e.Message);
                 }
                 userCommands.Remove(chatId);
                 break;
@@ -91,7 +91,7 @@ public class TgUpdateHandler
                 }
                 catch (Exception e)
                 {
-                    _logger.LogInformation("Command {@command}, exception message: {@message}", "getprices", e.Message);
+                    _logger.LogWarning("Command {@command}, exception message: {@message}", "getprices", e.Message);
                 }
                 userCommands.Remove(chatId);
                 break;
@@ -106,7 +106,7 @@ public class TgUpdateHandler
                 }
                 catch (Exception e)
                 {
-                    _logger.LogInformation("Command {@command}, exception message: {@message}", "newsubscription", e.Message);
+                    _logger.LogWarning("Command {@command}, exception message: {@message}", "newsubscription", e.Message);
                 }
 
                 break;
@@ -117,7 +117,7 @@ public class TgUpdateHandler
                 }
                 catch (Exception e)
                 {
-                    _logger.LogInformation("Command {@command}, exception message: {@message}", "mysubscriptions", e.Message);
+                    _logger.LogWarning("Command {@command}, exception message: {@message}", "mysubscriptions", e.Message);
                 }
                 userCommands.Remove(chatId);
                 break;
@@ -128,7 +128,7 @@ public class TgUpdateHandler
                 }
                 catch (Exception e)
                 {
-                    _logger.LogInformation("Command {@command}, exception message: {@message}", "delete", e.Message);
+                    _logger.LogWarning("Command {@command}, exception message: {@message}", "delete", e.Message);
                 }
                 userCommands.Remove(chatId);
                 break;
