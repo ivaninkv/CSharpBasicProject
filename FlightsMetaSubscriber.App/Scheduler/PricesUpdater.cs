@@ -25,7 +25,7 @@ public class PricesUpdater : IInvocable
     {
         _logger.LogInformation("Starting price update");
 
-        var tgUsers = UserRepository.GetActiveUsers();
+        var tgUsers = UserRepository.GetUsers(onlyActive: true);
 
         _logger.LogInformation("{@qty} active users found", tgUsers.Count);
 

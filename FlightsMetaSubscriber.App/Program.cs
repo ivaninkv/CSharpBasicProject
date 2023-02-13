@@ -30,6 +30,7 @@ using var host = Host.CreateDefaultBuilder(args)
         services.AddHostedService<Worker>();
         services.AddTransient<PricesUpdater>();
         services.AddTransient<OverdueSubscriptionDisabler>();
+        services.AddTransient<UserInfoUpdater>();
         services.AddScheduler();
     })
     .UseSerilog()
@@ -66,7 +67,23 @@ host.Services.UseScheduler(scheduler =>
                 e.Message);
         }
     }).Daily();
+
+    scheduler.ScheduleAsync(async () =>
+    {
+        using var scope = host.Services.CreateScope();
+        var userInfoUpdater = scope.ServiceProvider.GetRequiredService<UserInfoUpdater>();
+        try
+        {
+            await userInfoUpdater.Invoke();
+        }
+        catch (Exception e)
+        {
+            Log.Logger.Warning("UserInfoUpdater return error: {@ErrorMessage}",
+                e.Message);
+        }
+    }).Weekly().RunOnceAtStart();
 });
+
 try
 {
     await host.RunAsync();

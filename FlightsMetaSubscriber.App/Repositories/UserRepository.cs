@@ -32,13 +32,15 @@ public class UserRepository
         }
     }
 
-    public static List<TgUser> GetActiveUsers()
+    public static List<TgUser> GetUsers(bool onlyActive = true)
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
-        const string query =
-            "select id Id, username UserName, active Active " +
-            "from users " +
-            "where active = true";
+        var query = onlyActive
+            ? "select id Id, username UserName, active Active " +
+              "from users " +
+              "where active = true"
+            : "select id Id, username UserName, active Active " +
+              "from users";
         var result = conn.Query<TgUser>(query).ToList();
 
         return result;
