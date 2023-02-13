@@ -11,7 +11,7 @@ public class UserRepository
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string query = "insert into users (id, username, active) " +
                              "values (@id, @username, @active) " +
-                             "on conflict (id) do update set active = @active";
+                             "on conflict (id) do update set active = @active, username = @username";
         conn.Execute(query, new
         {
             id = user.Id,
