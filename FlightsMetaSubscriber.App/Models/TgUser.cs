@@ -2,9 +2,10 @@ namespace FlightsMetaSubscriber.App.Models;
 
 public class TgUser
 {
-    public TgUser(long userId)
+    public TgUser(long userId, string? userName)
     {
         Id = userId;
+        UserName = userName;
         Active = true;
     }
 
@@ -15,5 +16,6 @@ public class TgUser
     }
 
     public long Id { get; }
+    public string? UserName { get; set; }
     public bool Active { get; set; }
 }

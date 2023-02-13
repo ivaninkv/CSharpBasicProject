@@ -16,7 +16,7 @@ public class Start : ICommand
             "/mysubscriptions - просмотреть свои подписки\n" +
             "/getprices - запустить поиск цен\n" +
             "/stop - отписаться от всех подписок");
-        UserRepository.Save(new TgUser(message.Chat.Id));
+        UserRepository.Save(new TgUser(message.Chat.Id, message.Chat.Username));
 
         return true;
     }

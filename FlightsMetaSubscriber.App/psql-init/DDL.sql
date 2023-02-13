@@ -1,9 +1,10 @@
 create table users
 (
-    id     bigint not null
+    id       bigint not null
         constraint user_pk
             primary key,
-    active boolean
+    username varchar,
+    active   boolean
 );
 
 alter table users
