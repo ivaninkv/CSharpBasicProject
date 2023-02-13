@@ -8,7 +8,7 @@ public static class Config
 
     public static readonly string ConnectionString =
         $"User ID=postgres;Password={dbPass};Host={dbHost};Port=5432;Database={dbName};";
-
+    //
     public static readonly string BotToken = Environment.GetEnvironmentVariable("BOT_TOKEN");
     public static readonly string AviaSalesApiToken = Environment.GetEnvironmentVariable("AVIASALES_TOKEN");
 
