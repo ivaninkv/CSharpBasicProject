@@ -18,9 +18,16 @@ public class UserInfoUpdater : IInvocable
 
     public async Task Invoke()
     {
+        _logger.LogInformation("Start UserInfoUpdater");
+
         var tgUsers = UserRepository.GetUsers(onlyActive: false);
+
+        _logger.LogInformation("Found {@Qty} users", tgUsers.Count);
+
         foreach (var tgUser in tgUsers)
         {
+            _logger.LogInformation("Update info for user {@User}", tgUser.Id);
+
             try
             {
                 var userName = _tgBotClient.BotClient.GetChatAsync(tgUser.Id).Result.Username;
