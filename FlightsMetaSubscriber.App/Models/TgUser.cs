@@ -15,10 +15,10 @@ public class TgUser
         Active = active;
     }
 
-    public TgUser(long userId, string? userName, bool active)
+    public TgUser(long id, string? username, bool active)
     {
-        Id = userId;
-        UserName = userName;
+        Id = id;
+        UserName = username;
         Active = active;
     }
 
