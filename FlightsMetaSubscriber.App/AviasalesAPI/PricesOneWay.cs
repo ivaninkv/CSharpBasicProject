@@ -7,9 +7,10 @@ using RestSharp;
 
 namespace FlightsMetaSubscriber.App.AviasalesAPI;
 
-public class PricesOneWay
+public partial class PricesOneWay
 {
     private const string GraphQlUrl = "http://api.travelpayouts.com/graphql/v1/query";
+    private const string DateFormat = "yyyy-MM-dd";
     private readonly ILogger<PricesOneWay> _logger;
 
     public PricesOneWay(ILogger<PricesOneWay> logger)
@@ -25,24 +26,27 @@ public class PricesOneWay
             .AddHeader("X-Access-token", Config.AviaSalesApiToken)
             .AddParameter("application/json", BuildQuery(subscription), ParameterType.RequestBody);
 
-        var searchResults = new List<SearchResult>();
+        return await GetSearchResults(subscription.Id, client, request);
+    }
+
+    private async Task<List<SearchResult>> GetSearchResults(int subscriptionId, RestClient client, RestRequest request)
+    {
         try
         {
             var result = await client.PostAsync(request);
             var data = JsonNode.Parse(result.Content);
             var nodeList = JsonPath.Parse("$.*.*.*").Evaluate(data).Matches;
             // var searchResults = nodeList.ToJsonDocument().Deserialize<List<SearchResult>>();
-            searchResults = DeserializeNodeList(nodeList, subscription.Id);
+            return DeserializeNodeList(nodeList, subscriptionId);
         }
         catch (Exception e)
         {
             _logger.LogWarning("Error from AviaSales, message: {@ErrorMessage}", e.Message);
+            return new List<SearchResult>();
         }
-
-        return searchResults;
     }
 
-    private List<SearchResult> DeserializeNodeList(NodeList nodeList, int subscriptionId)
+    private static List<SearchResult> DeserializeNodeList(NodeList nodeList, int subscriptionId)
     {
         return nodeList.Select(node => new SearchResult(
                 subscriptionId,
@@ -68,19 +72,22 @@ public class PricesOneWay
                     origin.Code + "_" + destination.Code,
                     origin.Code,
                     destination.Code,
-                    subscription.DepartureMinDate.ToString("yyyy-MM-dd"),
-                    subscription.DepartureMaxDate.ToString("yyyy-MM-dd"),
+                    subscription.DepartureMinDate.ToString(DateFormat),
+                    subscription.DepartureMaxDate.ToString(DateFormat),
                     subscription.OnlyDirect.ToString().ToLower()));
             }
         }
 
         sb.Append('}');
 
-        var str = Regex.Replace(sb.ToString(), @"\s+", " ");
+        var str = WhiteSpaces().Replace(sb.ToString(), " ");
         var result = $"{{ \"operationName\": null, \"variables\": {{}}, \"query\": \"{str}\" }}";
 
         _logger.LogDebug("Price_one_way graphQL request {@PriceOneWayRequest}", result);
 
         return result;
     }
+
+    [GeneratedRegex("\\s+")]
+    private static partial Regex WhiteSpaces();
 }

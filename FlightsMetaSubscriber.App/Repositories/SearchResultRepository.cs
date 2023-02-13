@@ -20,6 +20,7 @@ public class SearchResultRepository
         const string query =
             "insert into search_result (subscription_id, search_dt, origin, destination, departure_at, price, ticket_link, dt_offset, number_of_changes) " +
             "values (@subscription_id, @search_dt, @origin, @destination, @departure_at, @price, @ticket_link, @dt_offset, @number_of_changes) returning id";
+
         var insertedId = conn.ExecuteScalar<int>(query, new
         {
             subscription_id = searchResult.SubscriptionId,

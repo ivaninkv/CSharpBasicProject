@@ -92,10 +92,11 @@ public class PricesUpdater : IInvocable
     {
         if (minResult.Value > 0)
         {
-            var message = "Результаты поиска по подписке:\n" +
-                          $"{subscription}" +
-                          "\n============\n" +
-                          $"{minResult}";
+            var message = 
+                "Результаты поиска по подписке:\n" +
+                $"{subscription}" +
+                "\n============\n" +
+                $"{minResult}";
 
             _logger.LogDebug("Search result - {@minResult}", minResult.ToString());
             await _tgBotClient.BotClient.SendTextMessageAsync(subscription.UserId, message, ParseMode.Markdown);

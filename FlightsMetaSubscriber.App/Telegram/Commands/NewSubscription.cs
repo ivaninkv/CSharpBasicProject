@@ -65,7 +65,7 @@ public class NewSubscription : ICommand
 
                 break;
             case 3:
-                var depCity = IataObject.GetObjectByString(message.Text);
+                var depCity = IataObject.FromString(message.Text);
                 _userSubscription[chatId].Origin.Add(depCity);
                 ReplyKeyboardMarkup step3Keyboard = new(new[]
                     {
@@ -143,7 +143,7 @@ public class NewSubscription : ICommand
 
                 break;
             case 7:
-                var arrCity = IataObject.GetObjectByString(message.Text);
+                var arrCity = IataObject.FromString(message.Text);
                 _userSubscription[chatId].Destination.Add(arrCity);
                 ReplyKeyboardMarkup step7Keyboard = new(new[]
                     {

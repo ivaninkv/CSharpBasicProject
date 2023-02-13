@@ -11,8 +11,11 @@ public class TgBot
     private readonly ILogger<TgBot> _logger;
     private readonly TgUpdateHandler _updateHandler;
 
-    public TgBot(ILogger<TgBot> logger, TgErrorHandler errorHandling,
-        TgUpdateHandler updateHandler, TgBotClient tgBotClient)
+    public TgBot(
+        ILogger<TgBot> logger,
+        TgErrorHandler errorHandling,
+        TgUpdateHandler updateHandler,
+        TgBotClient tgBotClient)
     {
         _logger = logger;
         _errorHandling = errorHandling;

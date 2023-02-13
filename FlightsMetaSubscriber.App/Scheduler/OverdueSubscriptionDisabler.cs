@@ -27,6 +27,5 @@ public class OverdueSubscriptionDisabler : IInvocable
         }
 
         _logger.LogInformation("Disabling overdue subscription finished");
-
     }
 }

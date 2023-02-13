@@ -2,7 +2,7 @@ namespace FlightsMetaSubscriber.App.Models;
 
 public class IataObject
 {
-    private const string Delimiter = "-";
+    private static readonly string Delimiter = "-";
 
     public IataObject(string code, string name)
     {
@@ -18,10 +18,13 @@ public class IataObject
         return $"{Code} - {Name}";
     }
 
-    public static IataObject GetObjectByString(string str)
+    public static IataObject FromString(string str)
     {
-        var arr = str.Split(Delimiter)
-            .Select(s => s.Trim()).ToArray();
+        var arr = str
+            .Split(Delimiter)
+            .Select(s => s.Trim())
+            .ToArray();
+
         if (arr.Length < 2)
         {
             throw new ArgumentException("Incorrect string. String should be with one dash delimiter");
