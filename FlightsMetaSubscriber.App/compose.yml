@@ -2,6 +2,14 @@ version: "3"
 services:
   fms-bot:
     image: ${FULL_IMAGE_NAME}
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512M"
+        reservations:
+          cpus: "0.1"
+          memory: "128M"
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
       - DB_HOST=${DB_HOST}
@@ -15,6 +23,14 @@ services:
 
   postgres:
     image: postgres:15.1-bullseye
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512M"
+        reservations:
+          cpus: "0.1"
+          memory: "128M"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready", "-d", "Shop" ]
       interval: 10s
