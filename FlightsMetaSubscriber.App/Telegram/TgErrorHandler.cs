@@ -12,7 +12,9 @@ public class TgErrorHandler
         _logger = logger;
     }
 
-    public Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception,
+    public Task HandlePollingErrorAsync(
+        ITelegramBotClient botClient,
+        Exception exception,
         CancellationToken cancellationToken)
     {
         var errorMessage = exception switch

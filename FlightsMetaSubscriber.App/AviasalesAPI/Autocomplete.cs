@@ -4,9 +4,10 @@ namespace FlightsMetaSubscriber.App.AviasalesAPI;
 
 public class Autocomplete
 {
-    private const string AutocompleteUrl =
+    private static readonly string AutocompleteUrl =
         "https://autocomplete.travelpayouts.com/places2?locale=ru&types[]=city&types[]=airport&term=";
 
+    // how to inject httpclient properly
     private static readonly HttpClient Client = new();
     private readonly ILogger<Autocomplete> _logger;
 
@@ -26,7 +27,7 @@ public class Autocomplete
         }
         catch (Exception e)
         {
-            _logger.LogError(e.Message);
+            _logger.LogError(e.ToString());
         }
 
         return Enumerable.Empty<AutocompleteResult>();

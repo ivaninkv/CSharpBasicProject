@@ -22,7 +22,7 @@ public class TgUser
         Active = active;
     }
 
-    public long Id { get; }
+    public long Id { get; init; }
     public string? UserName { get; set; }
     public bool Active { get; set; }
 }

@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace FlightsMetaSubscriber.App.Models;
 
 public class Subscription

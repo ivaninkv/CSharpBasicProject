@@ -21,9 +21,11 @@ public class UserRepository
 
         if (!user.Active)
         {
-            const string subscriptionQuery = "update subscription " +
-                                             "set active = @active " +
-                                             "where user_id = @user_id";
+            const string subscriptionQuery =
+                "update subscription " +
+                "set active = @active " +
+                "where user_id = @user_id";
+
             conn.Execute(subscriptionQuery, new
             {
                 active = user.Active,

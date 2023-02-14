@@ -2,10 +2,16 @@ namespace FlightsMetaSubscriber.App.Models;
 
 public class SearchResult
 {
-    private const string SearchUrl = "https://www.aviasales.ru/search";
+    private static readonly string SearchUrl = "https://www.aviasales.ru/search";
 
-    public SearchResult(int subscriptionId, string originCityIata, string destinationCityIata,
-        DateTimeOffset departureAt, double value, string ticketLink, int numberOfChanges)
+    public SearchResult(
+        int subscriptionId,
+        string originCityIata,
+        string destinationCityIata,
+        DateTimeOffset departureAt,
+        double value,
+        string ticketLink,
+        int numberOfChanges)
     {
         SubscriptionId = subscriptionId;
         OriginCityIata = originCityIata;
@@ -22,7 +28,7 @@ public class SearchResult
     {
     }
 
-    public int SubscriptionId { get; set; }
+    public int SubscriptionId { get; init; }
     public string OriginCityIata { get; set; }
     public string DestinationCityIata { get; set; }
     public DateTimeOffset DepartureAt { get; set; }

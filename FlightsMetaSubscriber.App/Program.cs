@@ -51,7 +51,7 @@ host.Services.UseScheduler(scheduler =>
             Log.Logger.Warning("PricesUpdater return error: {@ErrorMessage}",
                 e.Message);
         }
-    }).DailyAt(7, 0);
+    }).DailyAt(hour: 7, minute: 0);
 
     scheduler.ScheduleAsync(async () =>
     {
