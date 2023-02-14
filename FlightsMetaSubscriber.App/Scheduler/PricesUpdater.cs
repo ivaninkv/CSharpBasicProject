@@ -62,7 +62,7 @@ public class PricesUpdater : IInvocable
 
                 _logger.LogInformation("Found {@qty} search results", pricesForSubscription.Count);
 
-                SearchResultRepository.SaveAll(pricesForSubscription);
+                pricesForSubscription.SaveAll();
                 SendMinPriceBySubscription(subscription, minResult);
                 sumSubscriptions += minResult.Value;
 
@@ -92,7 +92,7 @@ public class PricesUpdater : IInvocable
     {
         if (minResult.Value > 0)
         {
-            var message = 
+            var message =
                 "Результаты поиска по подписке:\n" +
                 $"{subscription}" +
                 "\n============\n" +

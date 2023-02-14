@@ -30,6 +30,6 @@ public class IataObject
             throw new ArgumentException("Incorrect string. String should be with one dash delimiter");
         }
 
-        return new IataObject(arr[0], arr[1]);
+        return new IataObject(arr[0], string.Join(Delimiter, arr[1..]));
     }
 }

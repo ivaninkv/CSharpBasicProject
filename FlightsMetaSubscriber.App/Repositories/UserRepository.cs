@@ -4,9 +4,9 @@ using Npgsql;
 
 namespace FlightsMetaSubscriber.App.Repositories;
 
-public class UserRepository
+public static class UserRepository
 {
-    public static void Save(TgUser user)
+    public static void Save(this TgUser user)
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string query = "insert into users (id, username, active) " +

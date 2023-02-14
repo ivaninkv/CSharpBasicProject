@@ -32,7 +32,7 @@ public class UserInfoUpdater : IInvocable
             {
                 var userName = _tgBotClient.BotClient.GetChatAsync(tgUser.Id).Result.Username;
                 tgUser.UserName = userName;
-                UserRepository.Save(tgUser);
+                tgUser.Save();
             }
             catch (Exception e)
             {

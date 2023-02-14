@@ -12,7 +12,7 @@ public class Stop : ICommand
         await botClient.SendTextMessageAsync(message.Chat.Id,
             "Привет!\n\n" +
             "Жаль, что вы уходите, отключаем ваши подписки.");
-        UserRepository.Save(new TgUser(message.Chat.Id, false));
+        new TgUser(message.Chat.Id, false).Save();
 
         return true;
     }

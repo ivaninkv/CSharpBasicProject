@@ -14,7 +14,7 @@ public class DelSubscription : ICommand
             var subscriptionId = int.Parse(message.Text.Split(" ")[1]);
             var subscriptions = SubscriptionRepository.GetByUserId(message.Chat.Id);
             var subscription = subscriptions.First(s => s.Id == subscriptionId);
-            if (SubscriptionRepository.DisableSubscription(subscription))
+            if (subscription.DisableSubscription())
             {
                 botClient.SendTextMessageAsync(message.Chat.Id,
                 "Подписка успешно удалена");

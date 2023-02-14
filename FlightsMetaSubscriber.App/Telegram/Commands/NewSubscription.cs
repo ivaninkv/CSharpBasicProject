@@ -69,6 +69,7 @@ public class NewSubscription : ICommand
                 if (!_userSubscription[chatId].Origin.Contains(depCity))
                 {
                     _userSubscription[chatId].Origin.Add(depCity);
+                    depCity.Save();
                 }
 
                 ReplyKeyboardMarkup step3Keyboard = new(new[]
@@ -118,7 +119,7 @@ public class NewSubscription : ICommand
                 _userSubscription[chatId].DepartureMinDate = _departureMinDate;
                 _userSubscription[chatId].DepartureMaxDate = _departureMaxDate;
 
-                botClient.SendTextMessageAsync(chatId, "Введите город прибытия");
+                await botClient.SendTextMessageAsync(chatId, "Введите город прибытия");
 
                 _userSteps[chatId] = step + 1;
                 break;
@@ -151,6 +152,7 @@ public class NewSubscription : ICommand
                 if (!_userSubscription[chatId].Destination.Contains(arrCity))
                 {
                     _userSubscription[chatId].Destination.Add(arrCity);
+                    arrCity.Save();
                 }
 
                 ReplyKeyboardMarkup step7Keyboard = new(new[]
@@ -220,7 +222,7 @@ public class NewSubscription : ICommand
                 switch (message.Text)
                 {
                     case "OK":
-                        SubscriptionRepository.Save(_userSubscription[chatId]);
+                        _userSubscription[chatId].Save();
                         await botClient.SendTextMessageAsync(chatId,
                             "Подписка сохранена",
                             replyMarkup: new ReplyKeyboardRemove());

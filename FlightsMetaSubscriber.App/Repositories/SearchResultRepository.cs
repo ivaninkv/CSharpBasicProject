@@ -4,9 +4,9 @@ using Npgsql;
 
 namespace FlightsMetaSubscriber.App.Repositories;
 
-public class SearchResultRepository
+public static class SearchResultRepository
 {
-    public static void SaveAll(List<SearchResult> searchResults)
+    public static void SaveAll(this List<SearchResult> searchResults)
     {
         foreach (var searchResult in searchResults)
         {
@@ -14,7 +14,7 @@ public class SearchResultRepository
         }
     }
 
-    public static int Save(SearchResult searchResult)
+    public static int Save(this SearchResult searchResult)
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string query =

@@ -4,9 +4,9 @@ using Npgsql;
 
 namespace FlightsMetaSubscriber.App.Repositories;
 
-public class SubscriptionRepository
+public static class SubscriptionRepository
 {
-    public static bool DisableSubscription(Subscription subscription)
+    public static bool DisableSubscription(this Subscription subscription)
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string query =
@@ -51,17 +51,19 @@ public class SubscriptionRepository
         foreach (var subscription in subscriptions)
         {
             const string originQuery =
-                "select iata_code Code, iata_name Name " +
-                "from origin " +
-                "where subscribe_id = @subscription_id";
+                "select o.iata_code Code, io.name Name " +
+                "from origin o " +
+                "join iata_object io on io.code = o.iata_code " +
+                "where o.subscribe_id = @subscription_id";
             subscription.Origin =
                 conn.Query<IataObject>(originQuery, new { subscription_id = subscription.Id })
                     .ToList();
 
             const string destinationQuery =
-                "select iata_code Code, iata_name Name " +
-                "from destination " +
-                "where subscribe_id = @subscription_id";
+                "select d.iata_code Code, io.name Name " +
+                "from destination d " +
+                "join iata_object io on io.code = d.iata_code " +
+                "where d.subscribe_id = @subscription_id";
             subscription.Destination =
                 conn.Query<IataObject>(destinationQuery, new { subscription_id = subscription.Id })
                     .ToList();
@@ -70,7 +72,7 @@ public class SubscriptionRepository
         return subscriptions;
     }
 
-    public static void Save(Subscription subscription)
+    public static void Save(this Subscription subscription)
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string subscriptionQuery =
@@ -113,6 +115,6 @@ public class SubscriptionRepository
         }
 
         var tgUser = new TgUser(subscription.UserId, true);
-        UserRepository.Save(tgUser);
+        tgUser.Save();
     }
 }

@@ -27,36 +27,6 @@ create table subscription
 alter table subscription
     owner to postgres;
 
-create table origin
-(
-    subscribe_id integer not null
-        constraint origin_subscription_id_fk
-            references subscription,
-    user_id      bigint  not null,
-    iata_code    varchar not null,
-    iata_name    varchar,
-    constraint origin_pk
-        primary key (subscribe_id, user_id, iata_code)
-);
-
-alter table origin
-    owner to postgres;
-
-create table destination
-(
-    subscribe_id integer not null
-        constraint destination_subscription_id_fk
-            references subscription,
-    user_id      bigint  not null,
-    iata_code    varchar not null,
-    iata_name    varchar,
-    constraint destination_pk
-        primary key (subscribe_id, user_id, iata_code)
-);
-
-alter table destination
-    owner to postgres;
-
 create table search_result
 (
     id                serial
@@ -76,4 +46,49 @@ create table search_result
 );
 
 alter table search_result
+    owner to postgres;
+
+create table iata_object
+(
+    code varchar not null
+        constraint iata_object_pk
+            primary key,
+    name varchar
+);
+
+alter table iata_object
+    owner to postgres;
+
+create table origin
+(
+    subscribe_id integer not null
+        constraint origin_subscription_id_fk
+            references subscription,
+    user_id      bigint  not null,
+    iata_code    varchar not null
+        constraint origin_iata_object_code_fk
+            references iata_object,
+    iata_name    varchar,
+    constraint origin_pk
+        primary key (subscribe_id, user_id, iata_code)
+);
+
+alter table origin
+    owner to postgres;
+
+create table destination
+(
+    subscribe_id integer not null
+        constraint destination_subscription_id_fk
+            references subscription,
+    user_id      bigint  not null,
+    iata_code    varchar not null
+        constraint destination_iata_object_code_fk
+            references iata_object,
+    iata_name    varchar,
+    constraint destination_pk
+        primary key (subscribe_id, user_id, iata_code)
+);
+
+alter table destination
     owner to postgres;
