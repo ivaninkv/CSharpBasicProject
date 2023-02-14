@@ -66,7 +66,11 @@ public class NewSubscription : ICommand
                 break;
             case 3:
                 var depCity = IataObject.FromString(message.Text);
-                _userSubscription[chatId].Origin.Add(depCity);
+                if (!_userSubscription[chatId].Origin.Contains(depCity))
+                {
+                    _userSubscription[chatId].Origin.Add(depCity);
+                }
+
                 ReplyKeyboardMarkup step3Keyboard = new(new[]
                     {
                         new KeyboardButton[] { "Добавить город вылета", "Перейти к вводу дат" },
@@ -144,7 +148,11 @@ public class NewSubscription : ICommand
                 break;
             case 7:
                 var arrCity = IataObject.FromString(message.Text);
-                _userSubscription[chatId].Destination.Add(arrCity);
+                if (!_userSubscription[chatId].Destination.Contains(arrCity))
+                {
+                    _userSubscription[chatId].Destination.Add(arrCity);
+                }
+
                 ReplyKeyboardMarkup step7Keyboard = new(new[]
                     {
                         new KeyboardButton[] { "Добавить город прибытия", "Следующий шаг" },
