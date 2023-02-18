@@ -8,6 +8,8 @@ public class TgBotClient
 
     public TgBotClient()
     {
-        BotClient = new TelegramBotClient(Config.BotToken);
+        BotClient = new TelegramBotClient(
+            Config.BotToken ??
+            throw new InvalidOperationException("You can provide bot token in config"));
     }
 }

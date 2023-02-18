@@ -11,18 +11,18 @@ public class DelSubscription : ICommand
     {
         try
         {
-            var subscriptionId = int.Parse(message.Text.Split(" ")[1]);
+            var subscriptionId = int.Parse(message.Text!.Split(" ")[1]);
             var subscriptions = SubscriptionRepository.GetByUserId(message.Chat.Id);
             var subscription = subscriptions.First(s => s.Id == subscriptionId);
             if (subscription.DisableSubscription())
             {
-                botClient.SendTextMessageAsync(message.Chat.Id,
+                await botClient.SendTextMessageAsync(message.Chat.Id,
                 "Подписка успешно удалена");
             }
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            botClient.SendTextMessageAsync(message.Chat.Id,
+            await botClient.SendTextMessageAsync(message.Chat.Id,
                 "Некорректный ввод\n" +
                 "Введите команду в формате:\n" +
                 "/delete *number*,\n" +

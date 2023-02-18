@@ -11,6 +11,7 @@ namespace FlightsMetaSubscriber.App.Telegram.Commands;
 
 public class NewSubscription : ICommand
 {
+    private readonly string _stepLogTemplate = "User {@user}, step {@step}, input message: {@message}";
     private readonly ILogger<TgUpdateHandler> _logger;
     private readonly Autocomplete _autocomplete;
     private readonly Dictionary<long, int> _userSteps = new();
@@ -36,12 +37,14 @@ public class NewSubscription : ICommand
         switch (step)
         {
             case 1:
+                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
                 await botClient.SendTextMessageAsync(chatId,
                     "Введите город вылета");
                 _userSteps[chatId] = step + 1;
                 break;
             case 2:
-                var res = (await _autocomplete.GetIataCodeByName(message.Text))
+                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
+                var res = (await _autocomplete.GetIataCodeByName(message.Text!))
                     .Select(result => result.ToString())
                     .ToArray();
 
@@ -65,7 +68,8 @@ public class NewSubscription : ICommand
 
                 break;
             case 3:
-                var depCity = IataObject.FromString(message.Text);
+                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
+                var depCity = IataObject.FromString(message.Text!);
                 if (!_userSubscription[chatId].Origin.Contains(depCity))
                 {
                     _userSubscription[chatId].Origin.Add(depCity);
@@ -82,7 +86,8 @@ public class NewSubscription : ICommand
                 _userSteps[chatId] = step + 1;
                 break;
             case 4:
-                if (message.Text.Equals("Добавить город вылета"))
+                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
+                if (message.Text!.Equals("Добавить город вылета"))
                 {
                     await botClient.SendTextMessageAsync(chatId,
                         "Введите город вылета",
@@ -104,7 +109,8 @@ public class NewSubscription : ICommand
 
                 break;
             case 5:
-                var split = message.Text.Split("-")
+                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
+                var split = message.Text!.Split("-")
                     .Select(s => s.Trim()).ToArray();
                 if (!DateTime.TryParseExact(split[0], "dd.MM.yyyy", null, DateTimeStyles.None, out _departureMinDate) ||
                     !DateTime.TryParseExact(split[1], "dd.MM.yyyy", null, DateTimeStyles.None, out _departureMaxDate))
@@ -124,7 +130,8 @@ public class NewSubscription : ICommand
                 _userSteps[chatId] = step + 1;
                 break;
             case 6:
-                var res6Step = (await _autocomplete.GetIataCodeByName(message.Text))
+                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
+                var res6Step = (await _autocomplete.GetIataCodeByName(message.Text!))
                     .Select(result => result.ToString())
                     .ToArray();
 
@@ -148,7 +155,8 @@ public class NewSubscription : ICommand
 
                 break;
             case 7:
-                var arrCity = IataObject.FromString(message.Text);
+                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
+                var arrCity = IataObject.FromString(message.Text!);
                 if (!_userSubscription[chatId].Destination.Contains(arrCity))
                 {
                     _userSubscription[chatId].Destination.Add(arrCity);
@@ -165,7 +173,8 @@ public class NewSubscription : ICommand
                 _userSteps[chatId] = step + 1;
                 break;
             case 8:
-                if (message.Text.Equals("Добавить город прибытия"))
+                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
+                if (message.Text!.Equals("Добавить город прибытия"))
                 {
                     await botClient.SendTextMessageAsync(chatId,
                         "Добавить город прибытия",
@@ -191,12 +200,14 @@ public class NewSubscription : ICommand
                 break;
 
             case 9:
-                if (message.Text.Equals("Да") || message.Text.Equals("Нет"))
+                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
+                if (message.Text!.Equals("Да") || message.Text.Equals("Нет"))
                 {
                     _userSubscription[chatId].OnlyDirect = message.Text switch
                     {
                         "Да" => true,
-                        "Нет" => false
+                        "Нет" => false,
+                        _ => throw new ArgumentOutOfRangeException(message.Text, "Incorrect input")
                     };
 
                     ReplyKeyboardMarkup step10Keyboard = new(new[]
@@ -219,6 +230,7 @@ public class NewSubscription : ICommand
                 break;
 
             case 10:
+                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
                 switch (message.Text)
                 {
                     case "OK":
