@@ -15,16 +15,18 @@ public class TgUpdateHandler
     private readonly NewSubscription _newSubscription;
     private readonly MySubscriptions _mySubscriptions;
     private readonly DelSubscription _delSubscription;
+    private readonly UnknownCommand _unknownCommand;
     private readonly Dictionary<long, string> userCommands = new();
 
     public TgUpdateHandler(NewSubscription newSubscription, Start start, MySubscriptions mySubscriptions,
-        ILogger<TgUpdateHandler> logger, Help help, GetPrices getPrices, Stop stop, DelSubscription delSubscription)
+        ILogger<TgUpdateHandler> logger, Help help, GetPrices getPrices, Stop stop, DelSubscription delSubscription, UnknownCommand unknownCommand)
     {
         _logger = logger;
         _help = help;
         _getPrices = getPrices;
         _stop = stop;
         _delSubscription = delSubscription;
+        _unknownCommand = unknownCommand;
         _start = start;
         _newSubscription = newSubscription;
         _mySubscriptions = mySubscriptions;
@@ -133,6 +135,15 @@ public class TgUpdateHandler
                 userCommands.Remove(chatId);
                 break;
             default:
+                try
+                {
+                    await _unknownCommand.Handle(botClient, message);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning("UnknownCommand exception message: {@message}", e.Message);
+                }
+
                 userCommands.Remove(chatId);
                 break;
         }
