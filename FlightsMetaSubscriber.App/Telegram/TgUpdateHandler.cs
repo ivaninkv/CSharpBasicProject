@@ -1,4 +1,3 @@
-using FlightsMetaSubscriber.App.AviasalesAPI;
 using FlightsMetaSubscriber.App.Telegram.Commands;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -7,6 +6,7 @@ namespace FlightsMetaSubscriber.App.Telegram;
 
 public class TgUpdateHandler
 {
+    private readonly string _commandLogTemplate = "Command {@command}, exception message: {@message}";
     private readonly ILogger<TgUpdateHandler> _logger;
     private readonly Start _start;
     private readonly Stop _stop;
@@ -16,10 +16,11 @@ public class TgUpdateHandler
     private readonly MySubscriptions _mySubscriptions;
     private readonly DelSubscription _delSubscription;
     private readonly UnknownCommand _unknownCommand;
-    private readonly Dictionary<long, string> userCommands = new();
+    private readonly Dictionary<long, string> _userCommands = new();
 
     public TgUpdateHandler(NewSubscription newSubscription, Start start, MySubscriptions mySubscriptions,
-        ILogger<TgUpdateHandler> logger, Help help, GetPrices getPrices, Stop stop, DelSubscription delSubscription, UnknownCommand unknownCommand)
+        ILogger<TgUpdateHandler> logger, Help help, GetPrices getPrices, Stop stop, DelSubscription delSubscription,
+        UnknownCommand unknownCommand)
     {
         _logger = logger;
         _help = help;
@@ -39,13 +40,13 @@ public class TgUpdateHandler
             return;
 
         var chatId = message.Chat.Id;
-        if (userCommands.ContainsKey(chatId))
+        if (_userCommands.ContainsKey(chatId))
         {
-            command = userCommands[chatId];
+            command = _userCommands[chatId];
         }
         else
         {
-            userCommands[chatId] = command;
+            _userCommands[chatId] = command;
         }
 
         _logger.LogInformation("Received {@MessageText} message from {@ChatId} chat",
@@ -60,9 +61,10 @@ public class TgUpdateHandler
                 }
                 catch (Exception e)
                 {
-                    _logger.LogWarning("Command {@command}, exception message: {@message}", "start", e.Message);
+                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
                 }
-                userCommands.Remove(chatId);
+
+                _userCommands.Remove(chatId);
                 break;
             case "/stop":
                 try
@@ -71,9 +73,10 @@ public class TgUpdateHandler
                 }
                 catch (Exception e)
                 {
-                    _logger.LogWarning("Command {@command}, exception message: {@message}", "stop", e.Message);
+                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
                 }
-                userCommands.Remove(chatId);
+
+                _userCommands.Remove(chatId);
                 break;
             case "/help":
                 try
@@ -82,9 +85,10 @@ public class TgUpdateHandler
                 }
                 catch (Exception e)
                 {
-                    _logger.LogWarning("Command {@command}, exception message: {@message}", "help", e.Message);
+                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
                 }
-                userCommands.Remove(chatId);
+
+                _userCommands.Remove(chatId);
                 break;
             case "/getprices":
                 try
@@ -93,9 +97,10 @@ public class TgUpdateHandler
                 }
                 catch (Exception e)
                 {
-                    _logger.LogWarning("Command {@command}, exception message: {@message}", "getprices", e.Message);
+                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
                 }
-                userCommands.Remove(chatId);
+
+                _userCommands.Remove(chatId);
                 break;
             case "/newsubscription":
                 try
@@ -103,12 +108,12 @@ public class TgUpdateHandler
                     var completed = await _newSubscription.Handle(botClient, message);
                     if (completed)
                     {
-                        userCommands.Remove(chatId);
+                        _userCommands.Remove(chatId);
                     }
                 }
                 catch (Exception e)
                 {
-                    _logger.LogWarning("Command {@command}, exception message: {@message}", "newsubscription", e.Message);
+                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
                 }
 
                 break;
@@ -119,9 +124,10 @@ public class TgUpdateHandler
                 }
                 catch (Exception e)
                 {
-                    _logger.LogWarning("Command {@command}, exception message: {@message}", "mysubscriptions", e.Message);
+                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
                 }
-                userCommands.Remove(chatId);
+
+                _userCommands.Remove(chatId);
                 break;
             case var _ when command.Contains("/delete"):
                 try
@@ -130,9 +136,10 @@ public class TgUpdateHandler
                 }
                 catch (Exception e)
                 {
-                    _logger.LogWarning("Command {@command}, exception message: {@message}", "delete", e.Message);
+                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
                 }
-                userCommands.Remove(chatId);
+
+                _userCommands.Remove(chatId);
                 break;
             default:
                 try
@@ -141,10 +148,10 @@ public class TgUpdateHandler
                 }
                 catch (Exception e)
                 {
-                    _logger.LogWarning("UnknownCommand exception message: {@message}", e.Message);
+                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
                 }
 
-                userCommands.Remove(chatId);
+                _userCommands.Remove(chatId);
                 break;
         }
     }
