@@ -78,7 +78,7 @@ public class NewSubscription : ICommand
 
                 ReplyKeyboardMarkup step3Keyboard = new(new[]
                     {
-                        new KeyboardButton[] { "Добавить город вылета", "Перейти к вводу дат" },
+                        new KeyboardButton[] { "Добавить город вылета", "Следующий шаг" },
                     })
                     { ResizeKeyboard = true };
                 await botClient.SendTextMessageAsync(chatId, "Выберите следующее действие",
@@ -94,12 +94,10 @@ public class NewSubscription : ICommand
                         replyMarkup: new ReplyKeyboardRemove());
                     _userSteps[chatId] = 2;
                 }
-                else if (message.Text.Equals("Перейти к вводу дат"))
+                else if (message.Text.Equals("Следующий шаг"))
                 {
                     await botClient.SendTextMessageAsync(chatId,
-                        "Введите диапазон дат в формате: 'dd.MM.yyyy-dd.MM.yyyy'\n" +
-                        "Например: <code>01.05.2023-14.05.2023</code>", ParseMode.Html,
-                        replyMarkup: new ReplyKeyboardRemove());
+                        "Введите город прибытия", replyMarkup: new ReplyKeyboardRemove());
                     _userSteps[chatId] = step + 1;
                 }
                 else
@@ -110,37 +108,16 @@ public class NewSubscription : ICommand
                 break;
             case 5:
                 _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
-                var split = message.Text!.Split("-")
-                    .Select(s => s.Trim()).ToArray();
-                if (!DateTime.TryParseExact(split[0], "dd.MM.yyyy", null, DateTimeStyles.None, out _departureMinDate) ||
-                    !DateTime.TryParseExact(split[1], "dd.MM.yyyy", null, DateTimeStyles.None, out _departureMaxDate))
-                {
-                    await botClient.SendTextMessageAsync(chatId,
-                        "Некорректно введены даты.\n\n" +
-                        "Введите диапазон дат в формате: 'dd.MM.yyyy-dd.MM.yyyy'\n" +
-                        "Например: <code>01.05.2023-14.05.2023</code>", ParseMode.Html);
-                    break;
-                }
-
-                _userSubscription[chatId].DepartureMinDate = _departureMinDate;
-                _userSubscription[chatId].DepartureMaxDate = _departureMaxDate;
-
-                await botClient.SendTextMessageAsync(chatId, "Введите город прибытия");
-
-                _userSteps[chatId] = step + 1;
-                break;
-            case 6:
-                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
-                var res6Step = (await _autocomplete.GetIataCodeByName(message.Text!))
+                var res5Step = (await _autocomplete.GetIataCodeByName(message.Text!))
                     .Select(result => result.ToString())
                     .ToArray();
 
-                if (res6Step.Length > 0)
+                if (res5Step.Length > 0)
                 {
-                    var keyboard6Markup = new KeyboardButton[res6Step.Length][];
-                    for (var i = 0; i < res6Step.Length; i++)
+                    var keyboard6Markup = new KeyboardButton[res5Step.Length][];
+                    for (var i = 0; i < res5Step.Length; i++)
                     {
-                        keyboard6Markup[i] = new[] { new KeyboardButton(res6Step[i]) };
+                        keyboard6Markup[i] = new[] { new KeyboardButton(res5Step[i]) };
                     }
 
                     ReplyKeyboardMarkup step6Keyboard = new(keyboard6Markup) { ResizeKeyboard = true };
@@ -154,7 +131,7 @@ public class NewSubscription : ICommand
                 }
 
                 break;
-            case 7:
+            case 6:
                 _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
                 var arrCity = IataObject.FromString(message.Text!);
                 if (!_userSubscription[chatId].Destination.Contains(arrCity))
@@ -172,24 +149,21 @@ public class NewSubscription : ICommand
                     replyMarkup: step7Keyboard);
                 _userSteps[chatId] = step + 1;
                 break;
-            case 8:
+            case 7:
                 _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
                 if (message.Text!.Equals("Добавить город прибытия"))
                 {
                     await botClient.SendTextMessageAsync(chatId,
-                        "Добавить город прибытия",
+                        "Введите город прибытия",
                         replyMarkup: new ReplyKeyboardRemove());
-                    _userSteps[chatId] = 6;
+                    _userSteps[chatId] = 5;
                 }
                 else if (message.Text.Equals("Следующий шаг"))
                 {
-                    ReplyKeyboardMarkup step8Keyboard = new(new[]
-                        {
-                            new KeyboardButton[] { "Да", "Нет" },
-                        })
-                        { ResizeKeyboard = true };
-                    await botClient.SendTextMessageAsync(chatId, "Искать только прямые рейсы?",
-                        replyMarkup: step8Keyboard);
+                    await botClient.SendTextMessageAsync(chatId,
+                        "Введите диапазон дат вылета в формате: 'dd.MM.yyyy-dd.MM.yyyy'\n" +
+                        "Например: <code>01.05.2023-14.05.2023</code>", ParseMode.Html,
+                        replyMarkup: new ReplyKeyboardRemove());
                     _userSteps[chatId] = step + 1;
                 }
                 else
@@ -198,7 +172,33 @@ public class NewSubscription : ICommand
                 }
 
                 break;
+            case 8:
+                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
+                var split = message.Text!.Split("-")
+                    .Select(s => s.Trim()).ToArray();
+                if (!DateTime.TryParseExact(split[0], "dd.MM.yyyy", null, DateTimeStyles.None, out _departureMinDate) ||
+                    !DateTime.TryParseExact(split[1], "dd.MM.yyyy", null, DateTimeStyles.None, out _departureMaxDate))
+                {
+                    await botClient.SendTextMessageAsync(chatId,
+                        "Некорректно введены даты.\n\n" +
+                        "Введите диапазон дат вылета в формате: 'dd.MM.yyyy-dd.MM.yyyy'\n" +
+                        "Например: <code>01.05.2023-14.05.2023</code>", ParseMode.Html);
+                    break;
+                }
 
+                _userSubscription[chatId].DepartureMinDate = _departureMinDate;
+                _userSubscription[chatId].DepartureMaxDate = _departureMaxDate;
+
+                ReplyKeyboardMarkup step8Keyboard = new(new[]
+                    {
+                        new KeyboardButton[] { "Да", "Нет" },
+                    })
+                    { ResizeKeyboard = true };
+                await botClient.SendTextMessageAsync(chatId, "Искать только прямые рейсы?",
+                    replyMarkup: step8Keyboard);
+                _userSteps[chatId] = step + 1;
+
+                break;
             case 9:
                 _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
                 if (message.Text!.Equals("Да") || message.Text.Equals("Нет"))
@@ -228,7 +228,6 @@ public class NewSubscription : ICommand
                 }
 
                 break;
-
             case 10:
                 _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
                 switch (message.Text)

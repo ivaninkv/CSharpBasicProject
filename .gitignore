@@ -1,6 +1,7 @@
 # Custom
 .idea
 .env
+.DS_Store
 
 ### VisualStudio template
 ## Ignore Visual Studio temporary files, build results, and
