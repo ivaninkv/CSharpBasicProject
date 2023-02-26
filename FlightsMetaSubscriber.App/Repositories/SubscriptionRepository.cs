@@ -42,7 +42,14 @@ public static class SubscriptionRepository
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string query =
-            "select id Id, user_id UserId, departure_min_date DepartureMinDate, departure_max_date DepartureMaxDate, only_direct OnlyDirect, active Active " +
+            "select id Id " +
+            ", user_id UserId " +
+            ", departure_min_date DepartureMinDate " +
+            ", departure_max_date DepartureMaxDate " +
+            ", return_min_date ReturnMinDate " +
+            ", return_max_date ReturnMaxDate " +
+            ", only_direct OnlyDirect " +
+            ", active Active " +
             "from subscription " +
             "where user_id = @user_id " +
             "   and active = true";
@@ -76,13 +83,27 @@ public static class SubscriptionRepository
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string subscriptionQuery =
-            "insert into subscription(user_id, departure_min_date, departure_max_date, only_direct, active) " +
-            "values (@user_id, @departure_min_date, @departure_max_date, @only_direct, @active) returning id";
+            "insert into subscription(user_id " +
+            ", departure_min_date " +
+            ", departure_max_date " +
+            ", return_min_date " +
+            ", return_max_date " +
+            ", only_direct " +
+            ", active) " +
+            "values (@user_id " +
+            ", @departure_min_date " +
+            ", @departure_max_date " +
+            ", @return_min_date " +
+            ", @return_max_date " +
+            ", @only_direct " +
+            ", @active) returning id";
         var insertedId = conn.ExecuteScalar<int>(subscriptionQuery, new
         {
             user_id = subscription.UserId,
             departure_min_date = subscription.DepartureMinDate,
             departure_max_date = subscription.DepartureMaxDate,
+            return_min_date = subscription.ReturnMinDate,
+            return_max_date = subscription.ReturnMaxDate,
             only_direct = subscription.OnlyDirect,
             active = subscription.Active
         });

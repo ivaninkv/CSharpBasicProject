@@ -18,9 +18,32 @@ public static class SearchResultRepository
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string query =
-            "insert into search_result (subscription_id, search_dt, origin, destination, departure_at, price, ticket_link, dt_offset, number_of_changes) " +
-            "values (@subscription_id, @search_dt, @origin, @destination, @departure_at, @price, @ticket_link, @dt_offset, @number_of_changes) returning id";
+            "insert into search_result (subscription_id " +
+            ", search_dt " +
+            ", origin " +
+            ", destination " +
+            ", departure_at " +
+            ", return_at " +
+            ", price " +
+            ", ticket_link " +
+            ", dt_offset " +
+            ", number_of_changes) " +
+            "values (@subscription_id " +
+            ", @search_dt " +
+            ", @origin " +
+            ", @destination " +
+            ", @departure_at " +
+            ", @return_at" +
+            ", @price " +
+            ", @ticket_link " +
+            ", @dt_offset " +
+            ", @number_of_changes) returning id";
 
+        DateTimeOffset? return_at = null;
+        if (searchResult.ReturnAt.HasValue)
+        {
+            return_at = searchResult.ReturnAt.Value.UtcDateTime;
+        }
         var insertedId = conn.ExecuteScalar<int>(query, new
         {
             subscription_id = searchResult.SubscriptionId,
@@ -28,6 +51,7 @@ public static class SearchResultRepository
             origin = searchResult.OriginCityIata,
             destination = searchResult.DestinationCityIata,
             departure_at = searchResult.DepartureAt.UtcDateTime,
+            return_at = return_at,
             price = searchResult.Value,
             ticket_link = searchResult.TicketLink,
             dt_offset = searchResult.Offset,

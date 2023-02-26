@@ -27,7 +27,9 @@ using var host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<DelSubscription>();
         services.AddSingleton<UnknownCommand>();
         services.AddScoped<Autocomplete>();
+        services.AddScoped<GraphQLClient>();
         services.AddScoped<PricesOneWay>();
+        services.AddScoped<PricesRoundTrip>();
         services.AddHostedService<Worker>();
         services.AddTransient<PricesUpdater>();
         services.AddTransient<OverdueSubscriptionDisabler>();

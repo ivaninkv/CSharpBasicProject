@@ -18,6 +18,8 @@ public class NewSubscription : ICommand
     private readonly Dictionary<long, Subscription> _userSubscription = new();
     private DateTime _departureMinDate;
     private DateTime _departureMaxDate;
+    private DateTime _returnMinDate;
+    private DateTime _returnMaxDate;
 
     public NewSubscription(ILogger<TgUpdateHandler> logger, Autocomplete autocomplete)
     {
@@ -194,12 +196,67 @@ public class NewSubscription : ICommand
                         new KeyboardButton[] { "Да", "Нет" },
                     })
                     { ResizeKeyboard = true };
-                await botClient.SendTextMessageAsync(chatId, "Искать только прямые рейсы?",
+                await botClient.SendTextMessageAsync(chatId, "Нужны обратные билеты?",
                     replyMarkup: step8Keyboard);
                 _userSteps[chatId] = step + 1;
 
                 break;
+
             case 9:
+                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
+                if (message.Text!.Equals("Да"))
+                {
+                    await botClient.SendTextMessageAsync(chatId,
+                        "Введите диапазон дат возвращения в формате: 'dd.MM.yyyy-dd.MM.yyyy'\n" +
+                        "Например: <code>15.05.2023-31.05.2023</code>", ParseMode.Html,
+                        replyMarkup: new ReplyKeyboardRemove());
+                    _userSteps[chatId] = step + 1;
+                }
+                else if (message.Text.Equals("Нет"))
+                {
+                    ReplyKeyboardMarkup step9Keyboard = new(new[]
+                        {
+                            new KeyboardButton[] { "Да", "Нет" },
+                        })
+                        { ResizeKeyboard = true };
+                    await botClient.SendTextMessageAsync(chatId, "Искать только прямые рейсы?",
+                        replyMarkup: step9Keyboard);
+                    _userSteps[chatId] = step + 2;
+                }
+                else
+                {
+                    await botClient.SendTextMessageAsync(chatId, "Некорректный ввод");
+                }
+
+                break;
+            case 10:
+                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
+                var split10step = message.Text!.Split("-")
+                    .Select(s => s.Trim()).ToArray();
+                if (!DateTime.TryParseExact(split10step[0], "dd.MM.yyyy", null, DateTimeStyles.None, out _returnMinDate) ||
+                    !DateTime.TryParseExact(split10step[1], "dd.MM.yyyy", null, DateTimeStyles.None, out _returnMaxDate))
+                {
+                    await botClient.SendTextMessageAsync(chatId,
+                        "Некорректно введены даты.\n\n" +
+                        "Введите диапазон дат возвращения в формате: 'dd.MM.yyyy-dd.MM.yyyy'\n" +
+                        "Например: <code>15.05.2023-31.05.2023</code>", ParseMode.Html);
+                    break;
+                }
+
+                _userSubscription[chatId].ReturnMinDate = _returnMinDate;
+                _userSubscription[chatId].ReturnMaxDate = _returnMaxDate;
+
+                ReplyKeyboardMarkup step10Keyboard = new(new[]
+                    {
+                        new KeyboardButton[] { "Да", "Нет" },
+                    })
+                    { ResizeKeyboard = true };
+                await botClient.SendTextMessageAsync(chatId, "Искать только прямые рейсы?",
+                    replyMarkup: step10Keyboard);
+                _userSteps[chatId] = step + 1;
+
+                break;
+            case 11:
                 _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
                 if (message.Text!.Equals("Да") || message.Text.Equals("Нет"))
                 {
@@ -210,7 +267,7 @@ public class NewSubscription : ICommand
                         _ => throw new ArgumentOutOfRangeException(message.Text, "Incorrect input")
                     };
 
-                    ReplyKeyboardMarkup step10Keyboard = new(new[]
+                    ReplyKeyboardMarkup step11Keyboard = new(new[]
                         {
                             new KeyboardButton[] { "OK", "Cancel" },
                         })
@@ -218,7 +275,7 @@ public class NewSubscription : ICommand
                     await botClient.SendTextMessageAsync(chatId, "Подтвердите параметры подписки");
                     await botClient.SendTextMessageAsync(chatId, _userSubscription[chatId].ToString(),
                         ParseMode.Markdown,
-                        replyMarkup: step10Keyboard);
+                        replyMarkup: step11Keyboard);
 
                     _userSteps[chatId] = step + 1;
                 }
@@ -228,7 +285,7 @@ public class NewSubscription : ICommand
                 }
 
                 break;
-            case 10:
+            case 12:
                 _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
                 switch (message.Text)
                 {

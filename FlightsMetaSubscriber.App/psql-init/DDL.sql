@@ -20,6 +20,8 @@ create table subscription
             references users,
     departure_min_date date,
     departure_max_date date,
+    return_min_date    date,
+    return_max_date    date,
     only_direct        boolean,
     active             boolean
 );
@@ -39,6 +41,7 @@ create table search_result
     origin            varchar   not null,
     destination       varchar   not null,
     departure_at      timestamp,
+    return_at         timestamp,
     price             numeric,
     ticket_link       varchar,
     dt_offset         varchar,

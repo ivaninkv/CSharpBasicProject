@@ -12,7 +12,7 @@ public static class Config
     public static readonly string? BotToken = Environment.GetEnvironmentVariable("BOT_TOKEN");
     public static readonly string? AviaSalesApiToken = Environment.GetEnvironmentVariable("AVIASALES_TOKEN");
 
-    public static readonly string QueryTemplate = @"
+    public static readonly string PricesOneWayQueryTemplate = @"
 {0}: prices_one_way(
     params: {{
         origin: \""{1}\"",
@@ -32,6 +32,35 @@ public static class Config
         origin_city_iata
         destination_city_iata
         departure_at
+		value
+		ticket_link
+        number_of_changes
+    }},
+";
+    
+    public static readonly string PricesRoundTripQueryTemplate = @"
+{0}: prices_round_trip(
+    params: {{
+        origin: \""{1}\"",
+        destination: \""{2}\"",
+        depart_date_min: \""{3}\"",
+        depart_date_max: \""{4}\"",
+        return_date_min: \""{5}\"",
+        return_date_max: \""{6}\"",
+        no_lowcost: false,
+        direct: {7}
+    }},
+    grouping: NONE,
+    paging: {{
+        limit: 3,
+        offset: 0
+    }},
+    sorting: VALUE_ASC
+)   {{
+        origin_city_iata
+        destination_city_iata
+        departure_at
+        return_at
 		value
 		ticket_link
         number_of_changes

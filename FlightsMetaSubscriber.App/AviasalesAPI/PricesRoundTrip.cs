@@ -7,12 +7,12 @@ using RestSharp;
 
 namespace FlightsMetaSubscriber.App.AviasalesAPI;
 
-public partial class PricesOneWay : IGetPrices
+public partial class PricesRoundTrip : IGetPrices
 {
     private const string DateFormat = "yyyy-MM-dd";
-    private readonly ILogger<PricesOneWay> _logger;
+    private readonly ILogger<PricesRoundTrip> _logger;
 
-    public PricesOneWay(ILogger<PricesOneWay> logger)
+    public PricesRoundTrip(ILogger<PricesRoundTrip> logger)
     {
         _logger = logger;
     }
@@ -24,7 +24,7 @@ public partial class PricesOneWay : IGetPrices
                 node.Value["origin_city_iata"].ToString(),
                 node.Value["destination_city_iata"].ToString(),
                 DateTimeOffset.ParseExact(node.Value["departure_at"].ToString(), "yyyy-MM-ddTHH:mm:sszzz", null),
-                null,
+                DateTimeOffset.ParseExact(node.Value["return_at"].ToString(), "yyyy-MM-ddTHH:mm:sszzz", null),
                 double.Parse(node.Value["value"].ToString()),
                 node.Value["ticket_link"].ToString(),
                 int.Parse(node.Value["number_of_changes"].ToString())
@@ -40,12 +40,14 @@ public partial class PricesOneWay : IGetPrices
         {
             foreach (var destination in subscription.Destination)
             {
-                sb.Append(string.Format(Config.PricesOneWayQueryTemplate,
+                sb.Append(string.Format(Config.PricesRoundTripQueryTemplate,
                     origin.Code + "_" + destination.Code,
                     origin.Code,
                     destination.Code,
                     subscription.DepartureMinDate.ToString(DateFormat),
                     subscription.DepartureMaxDate.ToString(DateFormat),
+                    ((DateTime)subscription.ReturnMinDate).ToString(DateFormat),
+                    ((DateTime)subscription.ReturnMaxDate).ToString(DateFormat),
                     subscription.OnlyDirect.ToString().ToLower()));
             }
         }
@@ -55,7 +57,7 @@ public partial class PricesOneWay : IGetPrices
         var str = WhiteSpaces().Replace(sb.ToString(), " ");
         var result = $"{{ \"operationName\": null, \"variables\": {{}}, \"query\": \"{str}\" }}";
 
-        _logger.LogDebug("Price_one_way graphQL request {@PriceOneWayRequest}", result);
+        _logger.LogDebug("Price_round_trip graphQL request {@PriceOneWayRequest}", result);
 
         return result;
     }

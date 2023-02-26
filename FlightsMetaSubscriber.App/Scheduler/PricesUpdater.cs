@@ -10,13 +10,13 @@ namespace FlightsMetaSubscriber.App.Scheduler;
 
 public class PricesUpdater : IInvocable
 {
-    private readonly PricesOneWay _pricesOneWay;
+    private readonly GraphQLClient _graphQlClient;
     private readonly ILogger<PricesUpdater> _logger;
     private readonly TgBotClient _tgBotClient;
 
-    public PricesUpdater(PricesOneWay pricesOneWay, ILogger<PricesUpdater> logger, TgBotClient tgBotClient)
+    public PricesUpdater(GraphQLClient graphQlClient, ILogger<PricesUpdater> logger, TgBotClient tgBotClient)
     {
-        _pricesOneWay = pricesOneWay;
+        _graphQlClient = graphQlClient;
         _logger = logger;
         _tgBotClient = tgBotClient;
     }
@@ -56,14 +56,14 @@ public class PricesUpdater : IInvocable
         {
             try
             {
-                var pricesForSubscription = await _pricesOneWay.FindPricesForSubscription(subscription);
+                var pricesForSubscription = await _graphQlClient.FindPricesForSubscription(subscription);
                 var minResult = pricesForSubscription.OrderBy(result => result.Value)
                     .FirstOrDefault(new SearchResult());
 
                 _logger.LogInformation("Found {@qty} search results", pricesForSubscription.Count);
 
                 pricesForSubscription.SaveAll();
-                SendMinPriceBySubscription(subscription, minResult);
+                await SendMinPriceBySubscription(subscription, minResult);
                 sumSubscriptions += minResult.Value;
 
                 _logger.LogInformation("Price update completed");

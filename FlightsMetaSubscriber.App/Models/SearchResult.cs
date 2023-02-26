@@ -9,6 +9,7 @@ public class SearchResult
         string originCityIata,
         string destinationCityIata,
         DateTimeOffset departureAt,
+        DateTimeOffset? returnAt,
         double value,
         string ticketLink,
         int numberOfChanges)
@@ -17,6 +18,7 @@ public class SearchResult
         OriginCityIata = originCityIata;
         DestinationCityIata = destinationCityIata;
         DepartureAt = departureAt;
+        ReturnAt = returnAt;
         Value = value;
         TicketLink = ticketLink;
         SearchDate = DateTime.UtcNow;
@@ -32,6 +34,7 @@ public class SearchResult
     public string OriginCityIata { get; set; }
     public string DestinationCityIata { get; set; }
     public DateTimeOffset DepartureAt { get; set; }
+    public DateTimeOffset? ReturnAt { get; set; }
     public double Value { get; set; }
     public string TicketLink { get; set; }
     public DateTime SearchDate { get; set; }
@@ -43,6 +46,7 @@ public class SearchResult
         return $"Вылет из - {OriginCityIata}\n" +
                $"Прибытие в - {DestinationCityIata}\n" +
                $"Вылет - {DepartureAt:dd.MM.yyyy}\n" +
+               $"Возвращение - {ReturnAt:dd.MM.yyyy}\n" +
                $"Количество пересадок - {NumberOfChanges}\n" +
                $"Цена - {Value}\n" +
                $"[Купить билет]({GetFullUrl()})";

@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace FlightsMetaSubscriber.App.Models;
 
 public class Subscription
@@ -13,7 +11,17 @@ public class Subscription
         UserId = userId;
     }
 
-    public Subscription(int id, long userId, List<IataObject> origin, List<IataObject> destination, DateTime departureMinDate, DateTime departureMaxDate, bool onlyDirect, bool active)
+    public Subscription(
+        int id,
+        long userId,
+        List<IataObject> origin,
+        List<IataObject> destination,
+        DateTime departureMinDate,
+        DateTime departureMaxDate,
+        DateTime? returnMinDate,
+        DateTime? returnMaxDate,
+        bool onlyDirect,
+        bool active)
     {
         Id = id;
         UserId = userId;
@@ -21,6 +29,8 @@ public class Subscription
         Destination = destination;
         DepartureMinDate = departureMinDate;
         DepartureMaxDate = departureMaxDate;
+        ReturnMinDate = returnMinDate;
+        ReturnMaxDate = returnMaxDate;
         OnlyDirect = onlyDirect;
         Active = active;
     }
@@ -31,6 +41,8 @@ public class Subscription
     public List<IataObject> Destination { get; set; } = new();
     public DateTime DepartureMinDate { get; set; }
     public DateTime DepartureMaxDate { get; set; }
+    public DateTime? ReturnMinDate { get; set; }
+    public DateTime? ReturnMaxDate { get; set; }
     public bool OnlyDirect { get; set; }
     public bool Active { get; set; } = true;
 
@@ -41,6 +53,8 @@ public class Subscription
                $"Прибытие - {string.Join(", ", Destination)}\n" +
                $"Вылет с - {DepartureMinDate:dd.MM.yyyy}\n" +
                $"Вылет по - {DepartureMaxDate:dd.MM.yyyy}\n" +
+               $"Обратный вылет с {ReturnMinDate:dd.MM.yyyy}\n" +
+               $"Обратный вылет по {ReturnMaxDate:dd.MM.yyyy}\n" +
                $"Только прямые рейсы - {OnlyDirect}\n";
     }
 }
