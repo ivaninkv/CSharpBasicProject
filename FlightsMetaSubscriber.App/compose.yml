@@ -23,6 +23,7 @@ services:
 
   postgres:
     image: postgres:15.1-bullseye
+    user: postgres
     deploy:
       resources:
         limits:
