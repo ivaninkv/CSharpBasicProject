@@ -81,6 +81,9 @@ public static class SubscriptionRepository
 
     public static void Save(this Subscription subscription)
     {
+        var tgUser = new TgUser(subscription.UserId, true);
+        tgUser.Save();
+        
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string subscriptionQuery =
             "insert into subscription(user_id " +
@@ -134,8 +137,5 @@ public static class SubscriptionRepository
                 iata_name = iataObject.Name
             });
         }
-
-        var tgUser = new TgUser(subscription.UserId, true);
-        tgUser.Save();
     }
 }
