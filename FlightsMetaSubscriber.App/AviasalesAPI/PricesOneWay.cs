@@ -27,7 +27,8 @@ public partial class PricesOneWay : IGetPrices
                 null,
                 double.Parse(node.Value["value"].ToString()),
                 node.Value["ticket_link"].ToString(),
-                int.Parse(node.Value["number_of_changes"].ToString())
+                int.Parse(node.Value["number_of_changes"].ToString()),
+                bool.Parse(node.Value["with_baggage"].ToString())
             )
         ).ToList();
     }
@@ -46,7 +47,8 @@ public partial class PricesOneWay : IGetPrices
                     destination.Code,
                     subscription.DepartureMinDate.ToString(DateFormat),
                     subscription.DepartureMaxDate.ToString(DateFormat),
-                    subscription.OnlyDirect.ToString().ToLower()));
+                    subscription.OnlyDirect.ToString().ToLower(),
+                    subscription.Baggage.ToString().ToLower()));
             }
         }
 

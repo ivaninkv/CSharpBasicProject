@@ -27,7 +27,8 @@ public static class SearchResultRepository
             ", price " +
             ", ticket_link " +
             ", dt_offset " +
-            ", number_of_changes) " +
+            ", number_of_changes " +
+            ", baggage) " +
             "values (@subscription_id " +
             ", @search_dt " +
             ", @origin " +
@@ -37,7 +38,8 @@ public static class SearchResultRepository
             ", @price " +
             ", @ticket_link " +
             ", @dt_offset " +
-            ", @number_of_changes) returning id";
+            ", @number_of_changes " +
+            ", @baggage) returning id";
 
         DateTimeOffset? return_at = null;
         if (searchResult.ReturnAt.HasValue)
@@ -55,7 +57,8 @@ public static class SearchResultRepository
             price = searchResult.Value,
             ticket_link = searchResult.TicketLink,
             dt_offset = searchResult.Offset,
-            number_of_changes = searchResult.NumberOfChanges
+            number_of_changes = searchResult.NumberOfChanges,
+            baggage = searchResult.Baggage
         });
 
         return insertedId;

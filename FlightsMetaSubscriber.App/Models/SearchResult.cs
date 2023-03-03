@@ -12,7 +12,8 @@ public class SearchResult
         DateTimeOffset? returnAt,
         double value,
         string ticketLink,
-        int numberOfChanges)
+        int numberOfChanges,
+        bool baggage)
     {
         SubscriptionId = subscriptionId;
         OriginCityIata = originCityIata;
@@ -24,6 +25,7 @@ public class SearchResult
         SearchDate = DateTime.UtcNow;
         Offset = departureAt.Offset.ToString();
         NumberOfChanges = numberOfChanges;
+        Baggage = baggage;
     }
 
     public SearchResult()
@@ -40,6 +42,7 @@ public class SearchResult
     public DateTime SearchDate { get; set; }
     public string Offset { get; set; }
     public int NumberOfChanges { get; set; }
+    public bool Baggage { get; set; }
 
     public override string ToString()
     {
@@ -48,6 +51,7 @@ public class SearchResult
                $"Вылет - {DepartureAt:dd.MM.yyyy}\n" +
                $"Возвращение - {ReturnAt:dd.MM.yyyy}\n" +
                $"Количество пересадок - {NumberOfChanges}\n" +
+               $"Багаж включен - {Baggage}\n" +
                $"Цена - {Value}\n" +
                $"[Купить билет]({GetFullUrl()})";
     }

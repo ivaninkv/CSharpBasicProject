@@ -27,7 +27,8 @@ public partial class PricesRoundTrip : IGetPrices
                 DateTimeOffset.ParseExact(node.Value["return_at"].ToString(), "yyyy-MM-ddTHH:mm:sszzz", null),
                 double.Parse(node.Value["value"].ToString()),
                 node.Value["ticket_link"].ToString(),
-                int.Parse(node.Value["number_of_changes"].ToString())
+                int.Parse(node.Value["number_of_changes"].ToString()),
+                bool.Parse(node.Value["with_baggage"].ToString())
             )
         ).ToList();
     }
@@ -48,7 +49,8 @@ public partial class PricesRoundTrip : IGetPrices
                     subscription.DepartureMaxDate.ToString(DateFormat),
                     ((DateTime)subscription.ReturnMinDate).ToString(DateFormat),
                     ((DateTime)subscription.ReturnMaxDate).ToString(DateFormat),
-                    subscription.OnlyDirect.ToString().ToLower()));
+                    subscription.OnlyDirect.ToString().ToLower(),
+                    subscription.Baggage.ToString().ToLower()));
             }
         }
 

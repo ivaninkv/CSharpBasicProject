@@ -21,6 +21,7 @@ public class Subscription
         DateTime? returnMinDate,
         DateTime? returnMaxDate,
         bool onlyDirect,
+        bool baggage,
         bool active)
     {
         Id = id;
@@ -32,6 +33,7 @@ public class Subscription
         ReturnMinDate = returnMinDate;
         ReturnMaxDate = returnMaxDate;
         OnlyDirect = onlyDirect;
+        Baggage = baggage;
         Active = active;
     }
 
@@ -44,6 +46,7 @@ public class Subscription
     public DateTime? ReturnMinDate { get; set; }
     public DateTime? ReturnMaxDate { get; set; }
     public bool OnlyDirect { get; set; }
+    public bool Baggage { get; set; } = false;
     public bool Active { get; set; } = true;
 
     public override string ToString()
@@ -55,6 +58,7 @@ public class Subscription
                $"Вылет по - {DepartureMaxDate:dd.MM.yyyy}\n" +
                $"Обратный вылет с {ReturnMinDate:dd.MM.yyyy}\n" +
                $"Обратный вылет по {ReturnMaxDate:dd.MM.yyyy}\n" +
-               $"Только прямые рейсы - {OnlyDirect}\n";
+               $"Только прямые рейсы - {OnlyDirect}\n" +
+               $"Багаж включен - {Baggage}\n";
     }
 }

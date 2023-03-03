@@ -9,9 +9,13 @@ public static class UserRepository
     public static void Save(this TgUser user)
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
-        const string query = "insert into users (id, username, active) " +
-                             "values (@id, @username, @active) " +
-                             "on conflict (id) do update set active = @active, username = @username";
+        var query = user.UserName is not null
+            ? "insert into users (id, username, active) " +
+              "values (@id, @username, @active) " +
+              "on conflict (id) do update set active = @active, username = @username"
+            : "insert into users (id, active) " +
+              "values (@id, @active) " +
+              "on conflict (id) do update set active = @active";
         conn.Execute(query, new
         {
             id = user.Id,

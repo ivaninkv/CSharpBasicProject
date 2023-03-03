@@ -23,6 +23,7 @@ create table subscription
     return_min_date    date,
     return_max_date    date,
     only_direct        boolean,
+    baggage            boolean,
     active             boolean
 );
 
@@ -45,7 +46,8 @@ create table search_result
     price             numeric,
     ticket_link       varchar,
     dt_offset         varchar,
-    number_of_changes integer
+    number_of_changes integer,
+    baggage           boolean
 );
 
 alter table search_result

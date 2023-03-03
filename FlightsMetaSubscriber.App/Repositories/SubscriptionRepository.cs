@@ -27,7 +27,15 @@ public static class SubscriptionRepository
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string query =
-            "select id Id, user_id UserId, departure_min_date DepartureMinDate, departure_max_date DepartureMaxDate, only_direct OnlyDirect, active Active " +
+            "select id Id " +
+            ", user_id UserId " +
+            ", departure_min_date DepartureMinDate " +
+            ", departure_max_date DepartureMaxDate " +
+            ", return_min_date ReturnMinDate " +
+            ", return_max_date ReturnMaxDate " +
+            ", only_direct OnlyDirect " +
+            ", baggage Baggage " +
+            ", active Active " +
             "from subscription " +
             "where departure_max_date < @max_date";
         var subscriptions = conn.Query<Subscription>(query, new
@@ -49,6 +57,7 @@ public static class SubscriptionRepository
             ", return_min_date ReturnMinDate " +
             ", return_max_date ReturnMaxDate " +
             ", only_direct OnlyDirect " +
+            ", baggage Baggage " +
             ", active Active " +
             "from subscription " +
             "where user_id = @user_id " +
@@ -92,6 +101,7 @@ public static class SubscriptionRepository
             ", return_min_date " +
             ", return_max_date " +
             ", only_direct " +
+            ", baggage " +
             ", active) " +
             "values (@user_id " +
             ", @departure_min_date " +
@@ -99,6 +109,7 @@ public static class SubscriptionRepository
             ", @return_min_date " +
             ", @return_max_date " +
             ", @only_direct " +
+            ", @baggage " +
             ", @active) returning id";
         var insertedId = conn.ExecuteScalar<int>(subscriptionQuery, new
         {
@@ -108,6 +119,7 @@ public static class SubscriptionRepository
             return_min_date = subscription.ReturnMinDate,
             return_max_date = subscription.ReturnMaxDate,
             only_direct = subscription.OnlyDirect,
+            baggage = subscription.Baggage,
             active = subscription.Active
         });
 

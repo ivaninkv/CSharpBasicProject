@@ -269,14 +269,11 @@ public class NewSubscription : ICommand
 
                     ReplyKeyboardMarkup step11Keyboard = new(new[]
                         {
-                            new KeyboardButton[] { "OK", "Cancel" },
+                            new KeyboardButton[] { "Да", "Нет" },
                         })
                         { ResizeKeyboard = true };
-                    await botClient.SendTextMessageAsync(chatId, "Подтвердите параметры подписки");
-                    await botClient.SendTextMessageAsync(chatId, _userSubscription[chatId].ToString(),
-                        ParseMode.Markdown,
+                    await botClient.SendTextMessageAsync(chatId, "Искать только рейсы с багажом?",
                         replyMarkup: step11Keyboard);
-
                     _userSteps[chatId] = step + 1;
                 }
                 else
@@ -286,6 +283,34 @@ public class NewSubscription : ICommand
 
                 break;
             case 12:
+                _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
+                if (message.Text!.Equals("Да") || message.Text.Equals("Нет"))
+                {
+                    _userSubscription[chatId].Baggage = message.Text switch
+                    {
+                        "Да" => true,
+                        "Нет" => false,
+                        _ => throw new ArgumentOutOfRangeException(message.Text, "Incorrect input")
+                    };
+                    
+                    ReplyKeyboardMarkup step12Keyboard = new(new[]
+                        {
+                            new KeyboardButton[] { "OK", "Cancel" },
+                        })
+                        { ResizeKeyboard = true };
+                    await botClient.SendTextMessageAsync(chatId, "Подтвердите параметры подписки");
+                    await botClient.SendTextMessageAsync(chatId, _userSubscription[chatId].ToString(),
+                        ParseMode.Markdown,
+                        replyMarkup: step12Keyboard);
+                    
+                    _userSteps[chatId] = step + 1;
+                }
+                else
+                {
+                    await botClient.SendTextMessageAsync(chatId, "Некорректный ввод");
+                }
+                break;
+            case 13:
                 _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
                 switch (message.Text)
                 {

@@ -20,7 +20,8 @@ public static class Config
         depart_date_min: \""{3}\"",
         depart_date_max: \""{4}\"",
         no_lowcost: false,
-        direct: {5}
+        direct: {5},
+        with_baggage: {6}
     }},
     grouping: NONE,
     paging: {{
@@ -35,6 +36,7 @@ public static class Config
 		value
 		ticket_link
         number_of_changes
+        with_baggage
     }},
 ";
     
@@ -48,7 +50,8 @@ public static class Config
         return_date_min: \""{5}\"",
         return_date_max: \""{6}\"",
         no_lowcost: false,
-        direct: {7}
+        direct: {7},
+        with_baggage: {8}
     }},
     grouping: NONE,
     paging: {{
@@ -64,6 +67,7 @@ public static class Config
 		value
 		ticket_link
         number_of_changes
+        with_baggage
     }},
 ";
 }
