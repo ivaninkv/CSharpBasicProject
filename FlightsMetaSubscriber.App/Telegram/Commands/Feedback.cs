@@ -33,7 +33,7 @@ public class Feedback : ICommand
                 foreach (var adminId in Config.AdminIds)
                 {
                     var text = $"Сообщение от пользователя номер {chatId}, имя @{message.Chat.Username}:\n" +
-                               $"<code>{message.Text}</code>\n" +
+                               $"<code>{message.Text}</code>\n\n" +
                                $"#feedback";
                     await botClient.SendTextMessageAsync(adminId, text, ParseMode.Html);
                 }
