@@ -20,6 +20,7 @@ public static class Config
         depart_date_min: \""{3}\"",
         depart_date_max: \""{4}\"",
         no_lowcost: false,
+        convenient: true,
         direct: {5},
         with_baggage: {6}
     }},
@@ -50,6 +51,7 @@ public static class Config
         return_date_min: \""{5}\"",
         return_date_max: \""{6}\"",
         no_lowcost: false,
+        convenient: true,
         direct: {7},
         with_baggage: {8}
     }},
