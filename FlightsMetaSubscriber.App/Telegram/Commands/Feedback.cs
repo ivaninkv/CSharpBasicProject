@@ -1,5 +1,6 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace FlightsMetaSubscriber.App.Telegram.Commands;
 
@@ -31,7 +32,9 @@ public class Feedback : ICommand
                 _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
                 foreach (var adminId in Config.AdminIds)
                 {
-                    await botClient.SendTextMessageAsync(adminId, message.Text);
+                    var text = $"Сообщение от пользователя номер {chatId}, имя {message.Chat.Username}:\n" +
+                               $"<code>{message.Text}</code>";
+                    await botClient.SendTextMessageAsync(adminId, text, ParseMode.Markdown);
                 }
 
                 await botClient.SendTextMessageAsync(chatId, 
