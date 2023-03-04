@@ -26,6 +26,7 @@ using var host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<MySubscriptions>();
         services.AddSingleton<DelSubscription>();
         services.AddSingleton<UnknownCommand>();
+        services.AddSingleton<News>();
         services.AddScoped<Autocomplete>();
         services.AddScoped<GraphQLClient>();
         services.AddScoped<PricesOneWay>();

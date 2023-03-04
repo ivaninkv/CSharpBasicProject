@@ -13,8 +13,8 @@ public class GraphQLClient
     private readonly PricesRoundTrip _pricesRoundTrip;
 
     public GraphQLClient(
-        ILogger<GraphQLClient> logger, 
-        PricesOneWay pricesOneWay, 
+        ILogger<GraphQLClient> logger,
+        PricesOneWay pricesOneWay,
         PricesRoundTrip pricesRoundTrip)
     {
         _logger = logger;
@@ -27,7 +27,8 @@ public class GraphQLClient
         var client = new RestClient(GraphQlUrl);
         var request = new RestRequest("", Method.Post)
             .AddHeader("Content-Type", "application/json")
-            .AddHeader("X-Access-token", Config.AviaSalesApiToken)
+            .AddHeader("X-Access-token", Config.AviaSalesApiToken ?? 
+                                         throw new InvalidOperationException("You can provide aviasales token in config"))
             .AddParameter("application/json", BuildQuery(subscription), ParameterType.RequestBody);
 
         try

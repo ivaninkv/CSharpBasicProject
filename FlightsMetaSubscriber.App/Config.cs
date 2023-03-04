@@ -1,7 +1,10 @@
+using Serilog;
+
 namespace FlightsMetaSubscriber.App;
 
 public static class Config
 {
+    private static readonly Serilog.ILogger _logger = Log.ForContext(typeof(Config));
     private static readonly string? dbHost = Environment.GetEnvironmentVariable("DB_HOST");
     private static readonly string? dbName = Environment.GetEnvironmentVariable("DB_NAME");
     private static readonly string? dbPass = Environment.GetEnvironmentVariable("DB_PASS");
@@ -11,6 +14,8 @@ public static class Config
 
     public static readonly string? BotToken = Environment.GetEnvironmentVariable("BOT_TOKEN");
     public static readonly string? AviaSalesApiToken = Environment.GetEnvironmentVariable("AVIASALES_TOKEN");
+    public static readonly List<long> AdminIds = GetAdminIds();
+
 
     public static readonly string PricesOneWayQueryTemplate = @"
 {0}: prices_one_way(
@@ -40,7 +45,7 @@ public static class Config
         with_baggage
     }},
 ";
-    
+
     public static readonly string PricesRoundTripQueryTemplate = @"
 {0}: prices_round_trip(
     params: {{
@@ -72,4 +77,26 @@ public static class Config
         with_baggage
     }},
 ";
+
+
+    private static List<long> GetAdminIds()
+    {
+        try
+        {
+            var adminIds = Environment.GetEnvironmentVariable("ADMIN_IDS")
+                .Split(",")
+                .Select(long.Parse)
+                .ToList();
+
+            _logger.Debug("Admin ids is {@adminIds}", adminIds);
+
+            return adminIds;
+        }
+        catch (Exception e)
+        {
+            _logger.Warning("Can't parse ADMIN_IDS, error - {@Error}", e.Message);
+        }
+
+        return new List<long>();
+    }
 }

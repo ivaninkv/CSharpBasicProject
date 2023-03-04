@@ -16,11 +16,20 @@ public class TgUpdateHandler
     private readonly MySubscriptions _mySubscriptions;
     private readonly DelSubscription _delSubscription;
     private readonly UnknownCommand _unknownCommand;
+    private readonly News _news;
     private readonly Dictionary<long, string> _userCommands = new();
 
-    public TgUpdateHandler(NewSubscription newSubscription, Start start, MySubscriptions mySubscriptions,
-        ILogger<TgUpdateHandler> logger, Help help, GetPrices getPrices, Stop stop, DelSubscription delSubscription,
-        UnknownCommand unknownCommand)
+    public TgUpdateHandler(
+        NewSubscription newSubscription, 
+        Start start, 
+        MySubscriptions mySubscriptions,
+        ILogger<TgUpdateHandler> logger, 
+        Help help, 
+        GetPrices getPrices, 
+        Stop stop, 
+        DelSubscription delSubscription,
+        UnknownCommand unknownCommand,
+        News news)
     {
         _logger = logger;
         _help = help;
@@ -31,6 +40,7 @@ public class TgUpdateHandler
         _start = start;
         _newSubscription = newSubscription;
         _mySubscriptions = mySubscriptions;
+        _news = news;
     }
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
@@ -133,6 +143,18 @@ public class TgUpdateHandler
                 try
                 {
                     await _delSubscription.Handle(botClient, message);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                }
+
+                _userCommands.Remove(chatId);
+                break;
+            case var _ when command.Contains("/news"):
+                try
+                {
+                    await _news.Handle(botClient, message);
                 }
                 catch (Exception e)
                 {

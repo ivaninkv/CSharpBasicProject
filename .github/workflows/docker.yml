@@ -69,6 +69,7 @@ jobs:
             echo DB_NAME=${{ secrets.DB_NAME }} >> ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
             echo DB_PASS=${{ secrets.DB_PASS }} >> ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
             echo AVIASALES_TOKEN=${{ secrets.AVIASALES_TOKEN }} >> ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
+            echo ADMIN_IDS=${{ secrets.ADMIN_IDS }} >> ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
             echo Serilog__MinimumLevel=${{ secrets.SERILOG__MINIMUMLEVEL }} >> ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
             env $(cat ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env | grep ^[A-Z] | xargs) \
                 docker stack deploy -c ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/compose.yml ${{ env.APP_NAME }}
