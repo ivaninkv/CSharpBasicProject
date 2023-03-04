@@ -32,9 +32,9 @@ public class Feedback : ICommand
                 _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
                 foreach (var adminId in Config.AdminIds)
                 {
-                    var text = $"Сообщение от пользователя номер {chatId}, имя {message.Chat.Username}:\n" +
+                    var text = $"Сообщение от пользователя номер {chatId}, имя @{message.Chat.Username}:\n" +
                                $"<code>{message.Text}</code>";
-                    await botClient.SendTextMessageAsync(adminId, text, ParseMode.Markdown);
+                    await botClient.SendTextMessageAsync(adminId, text, ParseMode.Html);
                 }
 
                 await botClient.SendTextMessageAsync(chatId, 
