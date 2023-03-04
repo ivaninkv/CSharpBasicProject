@@ -19,7 +19,7 @@ public class News : ICommand
         var chatId = message.Chat.Id;
         if (!Config.AdminIds.Contains(chatId))
         {
-            botClient.SendTextMessageAsync(chatId, "У вас нет прав использовать эту команду");
+            await botClient.SendTextMessageAsync(chatId, "У вас нет прав использовать эту команду");
         }
         else
         {
@@ -30,7 +30,16 @@ public class News : ICommand
                 {
                     _logger.LogInformation("Sending news {@News} to user {@User}",
                         newsText, user.Id);
-                    botClient.SendTextMessageAsync(user.Id, newsText);
+                    try
+                    {
+                        await botClient.SendTextMessageAsync(user.Id, newsText);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning("Sending news for user {@User} has error {@Error}",
+                            user.Id, e.Message);
+                    }
+                    
                 }
             }
         }
