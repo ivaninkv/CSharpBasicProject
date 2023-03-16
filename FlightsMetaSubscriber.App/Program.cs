@@ -1,4 +1,5 @@
-﻿using Coravel;
+﻿using System.Globalization;
+using Coravel;
 using FlightsMetaSubscriber.App;
 using FlightsMetaSubscriber.App.AviasalesAPI;
 using FlightsMetaSubscriber.App.Scheduler;
@@ -7,7 +8,8 @@ using FlightsMetaSubscriber.App.Telegram.Commands;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
+    .WriteTo.Console(outputTemplate:
+        "[{Timestamp:dd-MM-yyyy HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
     .MinimumLevel.Debug()
     .CreateBootstrapLogger();
 
