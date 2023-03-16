@@ -9,6 +9,7 @@ using Serilog;
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console(outputTemplate:
         "[{Timestamp:dd-MM-yyyy HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+    .WriteTo.File(Path.Combine(Config.LogDirectory!, "fms.txt"), rollingInterval: RollingInterval.Day)
     .MinimumLevel.Debug()
     .CreateBootstrapLogger();
 

@@ -16,6 +16,9 @@ public static class Config
     public static readonly string? AviaSalesApiToken = Environment.GetEnvironmentVariable("AVIASALES_TOKEN");
     public static readonly List<long> AdminIds = GetAdminIds();
 
+    public static readonly string? LogDirectory = Environment.GetEnvironmentVariable("LOG_DIR") ??
+                                                  throw new InvalidOperationException(
+                                                      "You can provide ENV VAR - LOG_DIR");
 
     public static readonly string PricesOneWayQueryTemplate = @"
 {0}: prices_one_way(
