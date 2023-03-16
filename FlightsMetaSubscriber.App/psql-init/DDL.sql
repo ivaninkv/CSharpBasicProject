@@ -1,10 +1,11 @@
 create table users
 (
-    id       bigint not null
+    id         bigint not null
         constraint user_pk
             primary key,
-    username varchar,
-    active   boolean
+    username   varchar,
+    active     boolean,
+    created_dt timestamp default (now() AT TIME ZONE 'utc'::text)
 );
 
 alter table users
@@ -24,7 +25,8 @@ create table subscription
     return_max_date    date,
     only_direct        boolean,
     baggage            boolean,
-    active             boolean
+    active             boolean,
+    created_dt         timestamp default (now() AT TIME ZONE 'utc'::text)
 );
 
 alter table subscription

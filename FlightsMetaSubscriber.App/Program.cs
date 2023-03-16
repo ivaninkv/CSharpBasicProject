@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Coravel;
+﻿using Coravel;
 using FlightsMetaSubscriber.App;
 using FlightsMetaSubscriber.App.AviasalesAPI;
 using FlightsMetaSubscriber.App.Scheduler;
