@@ -22,8 +22,7 @@ public class OverdueSubscriptionDisabler : IInvocable
 
         foreach (var overdueSubscription in overdueSubscriptions)
         {
-            overdueSubscription.Active = false;
-            overdueSubscription.Save();
+            overdueSubscription.DisableSubscription();
         }
 
         _logger.LogInformation("Disabling overdue subscription finished");

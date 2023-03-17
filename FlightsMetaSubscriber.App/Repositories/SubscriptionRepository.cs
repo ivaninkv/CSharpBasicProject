@@ -37,7 +37,8 @@ public static class SubscriptionRepository
             ", baggage Baggage " +
             ", active Active " +
             "from subscription " +
-            "where departure_max_date < @max_date";
+            "where departure_max_date < @max_date " +
+            "   and active = true";
         var subscriptions = conn.Query<Subscription>(query, new
         {
             max_date = DateTime.Today
