@@ -86,9 +86,11 @@ public static class Config
     {
         try
         {
+            _logger.Information("Trying to parse ADMIN_IDS");
+
             var adminIds = Environment.GetEnvironmentVariable("ADMIN_IDS")
                 .Split(",")
-                .Select(long.Parse)
+                .Select(x => long.Parse(x.Trim()))
                 .ToList();
 
             _logger.Debug("Admin ids is {@adminIds}", adminIds);
