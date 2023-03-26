@@ -6,6 +6,18 @@ namespace FlightsMetaSubscriber.App.Repositories;
 
 public static class UserRepository
 {
+    public static int GetUsersQty(bool onlyActive = true)
+    {
+        using var conn = new NpgsqlConnection(Config.ConnectionString);
+        var query = "select count(*) from users";
+        if (onlyActive)
+        {
+            query += " where active = true";
+        }
+        
+        return conn.QueryFirstOrDefault<int>(query);
+    }
+    
     public static void Save(this TgUser user)
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);

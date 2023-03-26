@@ -17,7 +17,7 @@ public class News : ICommand
     public async Task<bool> Handle(ITelegramBotClient botClient, Message message)
     {
         var chatId = message.Chat.Id;
-        if (!Config.AdminIds.Contains(chatId))
+        if (!TgBot.CheckAdmin(chatId))
         {
             await botClient.SendTextMessageAsync(chatId, "У вас нет прав использовать эту команду");
         }

@@ -18,6 +18,7 @@ public class TgUpdateHandler
     private readonly UnknownCommand _unknownCommand;
     private readonly News _news;
     private readonly Feedback _feedback;
+    private readonly Users _users;
     private readonly Dictionary<long, string> _userCommands = new();
 
     public TgUpdateHandler(
@@ -31,7 +32,8 @@ public class TgUpdateHandler
         DelSubscription delSubscription,
         UnknownCommand unknownCommand,
         News news, 
-        Feedback feedback)
+        Feedback feedback, 
+        Users users)
     {
         _logger = logger;
         _help = help;
@@ -44,6 +46,7 @@ public class TgUpdateHandler
         _mySubscriptions = mySubscriptions;
         _news = news;
         _feedback = feedback;
+        _users = users;
     }
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
@@ -179,6 +182,18 @@ public class TgUpdateHandler
                 {
                     _logger.LogWarning(_commandLogTemplate, command, e.Message);
                 }
+                break;
+            case "/users":
+                try
+                {
+                    await _users.Handle(botClient, message);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                }
+
+                _userCommands.Remove(chatId);
                 break;
             default:
                 try

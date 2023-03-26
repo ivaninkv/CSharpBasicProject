@@ -41,4 +41,10 @@ public class TgBot
         var me = await _tgBotClient.BotClient.GetMeAsync(cts.Token);
         _logger.LogInformation("Start listening for @{@botName}", me.Username);
     }
+
+    public static bool CheckAdmin(long chatId)
+    {
+        return Config.AdminIds.Contains(chatId);
+    }
+    
 }

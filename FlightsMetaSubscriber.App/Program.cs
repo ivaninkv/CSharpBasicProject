@@ -30,6 +30,7 @@ using var host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<UnknownCommand>();
         services.AddSingleton<News>();
         services.AddSingleton<Feedback>();
+        services.AddSingleton<Users>();
         services.AddScoped<Autocomplete>();
         services.AddScoped<GraphQLClient>();
         services.AddScoped<PricesOneWay>();

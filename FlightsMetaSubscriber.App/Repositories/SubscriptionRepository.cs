@@ -6,6 +6,17 @@ namespace FlightsMetaSubscriber.App.Repositories;
 
 public static class SubscriptionRepository
 {
+    public static int GetSubscriptionQty(bool onlyActive = true)
+    {
+        using var conn = new NpgsqlConnection(Config.ConnectionString);
+        var query = "select count(*) from subscriptions";
+        if (onlyActive)
+        {
+            query += " where active = true";
+        }
+        return conn.QueryFirstOrDefault<int>(query);
+    }
+    
     public static bool DisableSubscription(this Subscription subscription)
     {
         using var conn = new NpgsqlConnection(Config.ConnectionString);
@@ -93,7 +104,7 @@ public static class SubscriptionRepository
     {
         var tgUser = new TgUser(subscription.UserId, true);
         tgUser.Save();
-        
+
         using var conn = new NpgsqlConnection(Config.ConnectionString);
         const string subscriptionQuery =
             "insert into subscription(user_id " +
