@@ -2,17 +2,16 @@
 WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+
 WORKDIR /src
 COPY ["FlightsMetaSubscriber.App/FlightsMetaSubscriber.App.csproj", "FlightsMetaSubscriber.App/"]
 RUN dotnet restore "FlightsMetaSubscriber.App/FlightsMetaSubscriber.App.csproj"
 COPY . .
 WORKDIR "/src/FlightsMetaSubscriber.App"
 RUN dotnet build "FlightsMetaSubscriber.App.csproj" -c Release -o /app/build
-
-FROM build AS publish
 RUN dotnet publish "FlightsMetaSubscriber.App.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "FlightsMetaSubscriber.App.dll"]
