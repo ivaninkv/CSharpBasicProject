@@ -50,4 +50,4 @@ services:
       - "5432:5432"
     volumes:
       - ./psql-init:/docker-entrypoint-initdb.d
-      - /apps/FlightsMetaSubscriber.App/psql-data:/var/lib/postgresql/data/pgdata
+      - /apps/FlightsMetaSubscriber.App/psql-data:/var/lib/postgresql/data
