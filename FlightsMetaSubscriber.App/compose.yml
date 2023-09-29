@@ -20,15 +20,15 @@ services:
       - LOG_DIR=${LOG_DIR}
     volumes:
       - /logs/FlightsMetaSubscriber.App:/app/logs
-        
-#   does not supported yet in docker swarm - https://github.com/docker/compose/issues/9957
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
+  
+  #   does not supported yet in docker swarm - https://github.com/docker/compose/issues/9957
+  #    depends_on:
+  #      postgres:
+  #        condition: service_healthy
 
   postgres:
     image: postgres:15.1-bullseye
-    user: postgres
+    user: ${UID}:${GID}
     deploy:
       resources:
         limits:
