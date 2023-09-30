@@ -83,7 +83,5 @@ jobs:
             echo ADMIN_IDS=\"${{ secrets.ADMIN_IDS }}\" >> ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
             echo LOG_DIR=${{ secrets.LOG_DIR }} >> ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
             echo Serilog__MinimumLevel=${{ secrets.SERILOG__MINIMUMLEVEL }} >> ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
-            echo UID=$(id -u postgres) >> ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
-            echo GID=$(id -g postgres) >> ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
             env $(cat ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env | grep ^[A-Z] | xargs) \
                 docker stack deploy -c ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/compose.yml ${{ env.APP_NAME }}
