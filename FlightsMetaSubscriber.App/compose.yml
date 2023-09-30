@@ -38,7 +38,7 @@ services:
           cpus: "0.1"
           memory: "128M"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready", "-d", "Shop" ]
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -d ${DB_NAME}'" ]
       interval: 10s
       timeout: 5s
       retries: 5
