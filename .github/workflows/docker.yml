@@ -62,7 +62,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: ${{ env.SRC_APP_FOLDER }}/compose.yml, ${{ env.SRC_APP_FOLDER }}/psql-init
+          source: ${{ env.SRC_APP_FOLDER }}/compose.yml, ${{ env.SRC_APP_FOLDER }}/psql-init, ${{ env.SRC_APP_FOLDER }}/pre-deploy.sh 
           target: ${{ env.TARGET_FOLDER }}
           rm: true
 
@@ -73,6 +73,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            bash ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/pre-deploy.sh
             echo FULL_IMAGE_NAME=${{ steps.meta.outputs.tags }} > ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
             echo BOT_TOKEN=${{ secrets.BOT_TOKEN }} >> ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
             echo DB_HOST=${{ secrets.DB_HOST }} >> ${{ env.TARGET_FOLDER }}/${{ env.SRC_APP_FOLDER }}/.env
