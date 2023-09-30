@@ -29,6 +29,7 @@ services:
   postgres:
     image: postgres:15.1-bullseye
     user: ${UID}:${GID}
+    command: bash -c "groupadd -g $PG_GID postgres && useradd -u $PG_UID -g $PG_GID -m -s /bin/bash postgres && exec postgres"
     deploy:
       resources:
         limits:
@@ -46,6 +47,8 @@ services:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_PASSWORD: ${DB_PASS}
       PGDATA: /var/lib/postgresql/data/pgdata
+      PG_GID: ${GID}
+      PG_UID: ${UID}
     ports:
       - "5432:5432"
     volumes:
