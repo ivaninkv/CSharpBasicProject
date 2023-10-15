@@ -14,7 +14,11 @@ public class Start : ICommand
             "Сейчас бот знает следующие команды:\n" +
             "/newsubscription - создать новую подписку\n" +
             "/mysubscriptions - просмотреть свои подписки\n" +
+            "/cancel - отменить ввод подписки и начать с начала\n" +
             "/getprices - запустить поиск цен\n" +
+            "/delete *number* - удалить подписку под номером *number*\n" +
+            "/feedback - написать разработчикам\n" +
+            "/help - показать список команд\n" +
             "/stop - отписаться от всех подписок");
         new TgUser(message.Chat.Id, message.Chat.Username).Save();
 

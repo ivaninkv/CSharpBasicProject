@@ -19,21 +19,23 @@ public class TgUpdateHandler
     private readonly News _news;
     private readonly Feedback _feedback;
     private readonly Users _users;
+    private readonly Cancel _cancel;
     private readonly Dictionary<long, string> _userCommands = new();
 
     public TgUpdateHandler(
-        NewSubscription newSubscription, 
-        Start start, 
+        NewSubscription newSubscription,
+        Start start,
         MySubscriptions mySubscriptions,
-        ILogger<TgUpdateHandler> logger, 
-        Help help, 
-        GetPrices getPrices, 
-        Stop stop, 
+        ILogger<TgUpdateHandler> logger,
+        Help help,
+        GetPrices getPrices,
+        Stop stop,
         DelSubscription delSubscription,
         UnknownCommand unknownCommand,
-        News news, 
-        Feedback feedback, 
-        Users users)
+        News news,
+        Feedback feedback,
+        Users users,
+        Cancel cancel)
     {
         _logger = logger;
         _help = help;
@@ -47,6 +49,7 @@ public class TgUpdateHandler
         _news = news;
         _feedback = feedback;
         _users = users;
+        _cancel = cancel;
     }
 
     public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
@@ -56,9 +59,9 @@ public class TgUpdateHandler
             return;
 
         var chatId = message.Chat.Id;
-        if (_userCommands.ContainsKey(chatId))
+        if (_userCommands.TryGetValue(chatId, out var value) && !message.Text.StartsWith("/cancel"))
         {
-            command = _userCommands[chatId];
+            command = value;
         }
         else
         {
@@ -182,11 +185,24 @@ public class TgUpdateHandler
                 {
                     _logger.LogWarning(_commandLogTemplate, command, e.Message);
                 }
+
                 break;
             case "/users":
                 try
                 {
                     await _users.Handle(botClient, message);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                }
+
+                _userCommands.Remove(chatId);
+                break;
+            case "/cancel":
+                try
+                {
+                    await _cancel.Handle(botClient, message);
                 }
                 catch (Exception e)
                 {

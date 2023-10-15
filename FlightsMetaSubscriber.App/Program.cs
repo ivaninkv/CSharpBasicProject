@@ -31,6 +31,7 @@ using var host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<News>();
         services.AddSingleton<Feedback>();
         services.AddSingleton<Users>();
+        services.AddSingleton<Cancel>();
         services.AddScoped<Autocomplete>();
         services.AddScoped<GraphQLClient>();
         services.AddScoped<PricesOneWay>();
