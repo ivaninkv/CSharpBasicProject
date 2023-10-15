@@ -30,6 +30,12 @@ public class NewSubscription : ICommand
     public async Task<bool> Handle(ITelegramBotClient botClient, Message message)
     {
         var chatId = message.Chat.Id;
+        if (message.Text is "/new")
+        {
+            _userSteps.Remove(chatId);
+            _userSubscription.Remove(chatId);
+        }
+
         var step = _userSteps.ContainsKey(chatId) ? _userSteps[chatId] : 1;
         if (!_userSubscription.ContainsKey(chatId))
         {
@@ -233,8 +239,10 @@ public class NewSubscription : ICommand
                 _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
                 var split10step = message.Text!.Split("-")
                     .Select(s => s.Trim()).ToArray();
-                if (!DateTime.TryParseExact(split10step[0], "dd.MM.yyyy", null, DateTimeStyles.None, out _returnMinDate) ||
-                    !DateTime.TryParseExact(split10step[1], "dd.MM.yyyy", null, DateTimeStyles.None, out _returnMaxDate))
+                if (!DateTime.TryParseExact(split10step[0], "dd.MM.yyyy", null, DateTimeStyles.None,
+                        out _returnMinDate) ||
+                    !DateTime.TryParseExact(split10step[1], "dd.MM.yyyy", null, DateTimeStyles.None,
+                        out _returnMaxDate))
                 {
                     await botClient.SendTextMessageAsync(chatId,
                         "Некорректно введены даты.\n\n" +
@@ -292,7 +300,7 @@ public class NewSubscription : ICommand
                         "Нет" => false,
                         _ => throw new ArgumentOutOfRangeException(message.Text, "Incorrect input")
                     };
-                    
+
                     ReplyKeyboardMarkup step12Keyboard = new(new[]
                         {
                             new KeyboardButton[] { "OK", "Cancel" },
@@ -302,13 +310,14 @@ public class NewSubscription : ICommand
                     await botClient.SendTextMessageAsync(chatId, _userSubscription[chatId].ToString(),
                         ParseMode.Markdown,
                         replyMarkup: step12Keyboard);
-                    
+
                     _userSteps[chatId] = step + 1;
                 }
                 else
                 {
                     await botClient.SendTextMessageAsync(chatId, "Некорректный ввод");
                 }
+
                 break;
             case 13:
                 _logger.LogInformation(_stepLogTemplate, chatId, step, message.Text);
