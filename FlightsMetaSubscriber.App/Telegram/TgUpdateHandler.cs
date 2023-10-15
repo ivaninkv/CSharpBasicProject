@@ -141,7 +141,7 @@ public class TgUpdateHandler
                     }
                 }, cancellationToken);
                 break;
-            case "/newsubscription":
+            case "/new":
                 Task.Run(async () =>
                 {
                     try
@@ -159,7 +159,7 @@ public class TgUpdateHandler
                 }, cancellationToken);
 
                 break;
-            case "/mysubscriptions":
+            case "/my":
                 Task.Run(async () =>
                 {
                     try
