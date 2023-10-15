@@ -74,154 +74,216 @@ public class TgUpdateHandler
         switch (command)
         {
             case "/start":
-                try
+                Task.Run(async () =>
                 {
-                    await _start.Handle(botClient, message);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
-                }
-
-                _userCommands.Remove(chatId);
-                break;
-            case "/stop":
-                try
-                {
-                    await _stop.Handle(botClient, message);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
-                }
-
-                _userCommands.Remove(chatId);
-                break;
-            case "/help":
-                try
-                {
-                    await _help.Handle(botClient, message);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
-                }
-
-                _userCommands.Remove(chatId);
-                break;
-            case "/getprices":
-                try
-                {
-                    await _getPrices.Handle(botClient, message);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
-                }
-
-                _userCommands.Remove(chatId);
-                break;
-            case "/newsubscription":
-                try
-                {
-                    var completed = await _newSubscription.Handle(botClient, message);
-                    if (completed)
+                    try
+                    {
+                        await _start.Handle(botClient, message);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                    }
+                    finally
                     {
                         _userCommands.Remove(chatId);
                     }
-                }
-                catch (Exception e)
+                }, cancellationToken);
+                break;
+            case "/stop":
+                Task.Run(async () =>
                 {
-                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
-                }
+                    try
+                    {
+                        await _stop.Handle(botClient, message);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                    }
+                    finally
+                    {
+                        _userCommands.Remove(chatId);
+                    }
+                }, cancellationToken);
+                break;
+            case "/help":
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _help.Handle(botClient, message);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                    }
+                    finally
+                    {
+                        _userCommands.Remove(chatId);
+                    }
+                }, cancellationToken);
+                break;
+            case "/getprices":
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _getPrices.Handle(botClient, message);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                    }
+                    finally
+                    {
+                        _userCommands.Remove(chatId);
+                    }
+                }, cancellationToken);
+                break;
+            case "/newsubscription":
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        var completed = await _newSubscription.Handle(botClient, message);
+                        if (completed)
+                        {
+                            _userCommands.Remove(chatId);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                    }
+                }, cancellationToken);
 
                 break;
             case "/mysubscriptions":
-                try
+                Task.Run(async () =>
                 {
-                    await _mySubscriptions.Handle(botClient, message);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
-                }
-
-                _userCommands.Remove(chatId);
-                break;
-            case var _ when command.Contains("/delete"):
-                try
-                {
-                    await _delSubscription.Handle(botClient, message);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
-                }
-
-                _userCommands.Remove(chatId);
-                break;
-            case var _ when command.Contains("/news"):
-                try
-                {
-                    await _news.Handle(botClient, message);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
-                }
-
-                _userCommands.Remove(chatId);
-                break;
-            case "/feedback":
-                try
-                {
-                    var completed = await _feedback.Handle(botClient, message);
-                    if (completed)
+                    try
+                    {
+                        await _mySubscriptions.Handle(botClient, message);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                    }
+                    finally
                     {
                         _userCommands.Remove(chatId);
                     }
-                }
-                catch (Exception e)
+                }, cancellationToken);
+
+                break;
+            case var _ when command.Contains("/delete"):
+                Task.Run(async () =>
                 {
-                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
-                }
+                    try
+                    {
+                        await _delSubscription.Handle(botClient, message);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                    }
+                    finally
+                    {
+                        _userCommands.Remove(chatId);
+                    }
+                }, cancellationToken);
+
+                break;
+            case var _ when command.Contains("/news"):
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _news.Handle(botClient, message);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                    }
+                    finally
+                    {
+                        _userCommands.Remove(chatId);
+                    }
+                }, cancellationToken);
+
+                break;
+            case "/feedback":
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        var completed = await _feedback.Handle(botClient, message);
+                        if (completed)
+                        {
+                            _userCommands.Remove(chatId);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                    }
+                }, cancellationToken);
 
                 break;
             case "/users":
-                try
+                Task.Run(async () =>
                 {
-                    await _users.Handle(botClient, message);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
-                }
+                    try
+                    {
+                        await _users.Handle(botClient, message);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                    }
+                    finally
+                    {
+                        _userCommands.Remove(chatId);
+                    }
+                }, cancellationToken);
 
-                _userCommands.Remove(chatId);
                 break;
             case "/cancel":
-                try
+                Task.Run(async () =>
                 {
-                    await _cancel.Handle(botClient, message);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
-                }
+                    try
+                    {
+                        await _cancel.Handle(botClient, message);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                    }
+                    finally
+                    {
+                        _userCommands.Remove(chatId);
+                    }
+                }, cancellationToken);
 
-                _userCommands.Remove(chatId);
                 break;
             default:
-                try
+                Task.Run(async () =>
                 {
-                    await _unknownCommand.Handle(botClient, message);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogWarning(_commandLogTemplate, command, e.Message);
-                }
+                    try
+                    {
+                        await _unknownCommand.Handle(botClient, message);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogWarning(_commandLogTemplate, command, e.Message);
+                    }
+                    finally
+                    {
+                        _userCommands.Remove(chatId);
+                    }
+                }, cancellationToken);
 
-                _userCommands.Remove(chatId);
                 break;
         }
     }
