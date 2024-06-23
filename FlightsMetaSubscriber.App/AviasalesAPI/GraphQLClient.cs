@@ -24,25 +24,28 @@ public class GraphQLClient
 
     public async Task<List<SearchResult>> FindPricesForSubscription(Subscription subscription)
     {
+        var searchResult = new List<SearchResult>();
         var client = new RestClient(GraphQlUrl);
-        var request = new RestRequest("", Method.Post)
-            .AddHeader("Content-Type", "application/json")
-            .AddHeader("X-Access-token", Config.AviaSalesApiToken ?? 
-                                         throw new InvalidOperationException("You can provide aviasales token in config"))
-            .AddParameter("application/json", BuildQuery(subscription), ParameterType.RequestBody);
-
-        try
+        var queries = BuildQuery(subscription);
+        foreach (var request in queries.Select(query => new RestRequest("", Method.Post)
+                     .AddHeader("Content-Type", "application/json")
+                     .AddHeader("X-Access-token", Config.AviaSalesApiToken ?? 
+                                                  throw new InvalidOperationException("You can provide aviasales token in config"))
+                     .AddParameter("application/json", query, ParameterType.RequestBody)))
         {
-            var result = await client.PostAsync(request);
-            var data = JsonNode.Parse(result.Content);
-            var nodeList = JsonPath.Parse("$.*.*.*").Evaluate(data).Matches;
-            return DeserializeNodeList(nodeList, subscription);
+            try
+            {
+                var result = await client.PostAsync(request);
+                var data = JsonNode.Parse(result.Content);
+                var nodeList = JsonPath.Parse("$.*.*.*").Evaluate(data).Matches;
+                searchResult.AddRange(DeserializeNodeList(nodeList, subscription));
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning("Error from AviaSales, message: {@ErrorMessage}", e.Message);
+            }
         }
-        catch (Exception e)
-        {
-            _logger.LogWarning("Error from AviaSales, message: {@ErrorMessage}", e.Message);
-            return new List<SearchResult>();
-        }
+        return searchResult;
     }
 
     private List<SearchResult> DeserializeNodeList(NodeList nodeList, Subscription subscription)
@@ -57,7 +60,7 @@ public class GraphQLClient
         }
     }
 
-    private string BuildQuery(Subscription subscription)
+    private List<string> BuildQuery(Subscription subscription)
     {
         if (subscription.ReturnMaxDate is null || subscription.ReturnMinDate is null)
         {

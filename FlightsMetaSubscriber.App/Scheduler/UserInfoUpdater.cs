@@ -20,9 +20,9 @@ public class UserInfoUpdater : IInvocable
     {
         _logger.LogInformation("Start UserInfoUpdater");
 
-        var tgUsers = UserRepository.GetUsers(onlyActive: false);
+        var tgUsers = UserRepository.GetUsers(onlyActive: true);
 
-        _logger.LogInformation("Found {@Qty} users", tgUsers.Count);
+        _logger.LogInformation("Found {@Qty} active users", tgUsers.Count);
 
         foreach (var tgUser in tgUsers)
         {
